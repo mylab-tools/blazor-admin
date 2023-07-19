@@ -1,0 +1,120 @@
+﻿@using Microsoft.AspNetCore.Components.Routing
+@using MyLab.BlazorAdmin.Services.PageNavigation
+@inherits LayoutComponentBase
+@inject IPageNavigator Navigator
+@inject NavigationManager NavigationManager
+
+<div class="min-100h d-flex flex-row">
+    <div class="ml-sidebar d-flex flex-column">
+        <div class="ml-header ml-sidebar-header">
+            <div class="d-flex flex-column ml-sidebar-header">
+                <a href="#" class="text-center mt-3">
+                    <img src="img/logo.png">
+                </a>
+            </div>
+        </div>
+        @*<UserBlock/>*@
+        <NavMenu/>
+    </div>
+    <div class="ml-main-wrapper ">
+        <div class="ml-main d-flex flex-column flex-fill">
+            <nav class="navbar ml-header ps-4 pe-4 ml-main-part">
+                <div class="d-flex flex-row ms-auto">
+                    <a href="#" class="ml-header-link" title="Уведомления"><i class="fas fa-lg fa-bell"></i></a>
+                    <a href="#" class="ml-header-link" title="Выход"><i class="fas fa-lg fa-sign-out-alt"></i></a>
+                </div>
+            </nav>
+            <div class="ml-content-header d-flex flex-column ps-4 ml-main-part">
+                <div>
+                    <h1 class="ml-header-title">Портал "Информационный нотариат"</h1>
+                </div>
+                <div>
+                    @if (_navigationPageDescription != null)
+                    {
+                        for (int i = 0; i < _navigationPageDescription.NavPath.Length; i++)
+                        {
+                            if (i != 0)
+                            {
+                                <span class="ml-header-link-delimiter ms-1 me-1">/</span>
+                            }
+
+                            var pg = _navigationPageDescription.NavPath[i];
+
+                            <a href="@pg.Url" class="ml-content-header-link ml-adv-link">@pg.Title</a>    
+                        }
+                    }
+                </div>
+            </div>
+            <div class="ml-page-content-wrapper  ms-4 pt-0 me-4 d-flex flex-grow-1 ml-main-part d-flex flex-column">
+                <div class="d-flex flex-row ps-4 pt-3 pe-4 pb-3 align-items-center">
+                    <h2 class="ml-page-content-header mb-0">@_pageTitle</h2>
+                </div>
+                <div class="container ms-0 ps-4 pb-4 pe-4">
+                    <CascadingValue Value="this" Name="LayoutPage">
+                        @Body
+                    </CascadingValue>
+                </div>
+                
+            </div>
+            <footer class="ps-4 pe-4 d-flex flex-column">
+                @*@if (_bottomNavPane is {Length: >0})
+                {
+                    <div class="d-flex align-items-end flex-row p-2 ms-0 me-0 ml-nav-pane">
+                        @foreach (var b in _bottomNavPane)
+                        {
+                            <a class="btn btn-secondary" href="@b.Url">
+                                @if (b.Title != null)
+                                {
+                                    <span>@b.Title</span>
+                                }
+                                else if(b.FaClass != null)
+                                {
+                                    <i class="fa @b.FaClass"/>
+                                }
+                            </a>
+                        }
+                    </div>
+                }*@
+                <div class="d-flex flex-row ml-footer align-items-center justify-content-end">
+                    <span class="text-muted">Copyright © 2022 — Triasoft</span>
+                </div>
+            </footer>  
+        </div>
+    </div>
+    
+</div>
+
+@code {
+
+    string? _pageTitle;
+    PageNavigation? _navigationPageDescription;
+
+    protected override void OnInitialized()
+    {
+        NavigationManager.LocationChanged += OnLocationChanged;
+
+        UpdateContextData();
+
+        base.OnInitialized();
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        UpdateContextData();
+    }
+
+    void UpdateContextData()
+    {
+        var currentUri = new Uri(NavigationManager.Uri);
+        var desc = Navigator.GetPageDescription(currentUri.LocalPath);
+
+        if (desc != null)
+        {
+            _pageTitle = desc.Title;
+            _navigationPageDescription = desc;
+        }
+
+        StateHasChanged();
+    }
+
+}

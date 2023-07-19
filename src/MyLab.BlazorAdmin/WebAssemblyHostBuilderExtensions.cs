@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using MyLab.BlazorAdmin.Services.PageNavigation;
 
 namespace MyLab.BlazorAdmin
 {
@@ -31,6 +32,7 @@ namespace MyLab.BlazorAdmin
             var baseApiAddr = hBuilder.Configuration.GetSection("Test")["BaseApiUrl"] ?? hBuilder.HostEnvironment.BaseAddress;
 
             hBuilder.Services
+                .AddSingleton<IPageNavigator, PageNavigator>()
                 .AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("api"))
                 .AddHttpClient<HttpClient>("api", c => c.BaseAddress = new Uri(baseApiAddr))
                 .AddHttpMessageHandler(sp =>

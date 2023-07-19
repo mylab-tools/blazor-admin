@@ -1,0 +1,28 @@
+﻿@using MyLab.BlazorAdmin.Services.PageNavigation
+
+@inject IPageNavigator Navigator
+
+<div class="ml-sidenav pt-1">
+
+    @if (Navigator != null)
+    {
+        @foreach (var navGroup in Navigator.GetNavigation())
+        {
+            if (navGroup.Pages == null) continue;
+
+            if (!string.IsNullOrEmpty(navGroup.Title))
+            {
+                <div class="ml-sidenav-title">@navGroup.Title</div>
+            }
+
+            foreach (var page in navGroup.Pages)
+            {
+                <NavLink href="@(page.Url)" Match="NavLinkMatch.All" class="ml-sidenav-link d-flex flex-row">
+                    <i class="text-center align-self-center fas fa-@(page.FaClass)"></i>
+                    <span>@(page.Title)</span>
+                </NavLink>
+            }
+        }
+    }
+
+</div>
