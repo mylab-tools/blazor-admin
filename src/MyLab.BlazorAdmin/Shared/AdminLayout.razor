@@ -1,8 +1,4 @@
-﻿@using Microsoft.AspNetCore.Components.Routing
-@using MyLab.BlazorAdmin.Services.PageNavigation
-@inherits LayoutComponentBase
-@inject IPageNavigator Navigator
-@inject NavigationManager NavigationManager
+﻿@inherits LayoutComponentBase
 
 <div class="min-100h d-flex flex-row">
     <div class="ml-sidebar d-flex flex-column">
@@ -57,7 +53,7 @@
                 
             </div>
             <footer class="ps-4 pe-4 d-flex flex-column">
-                @*@if (_bottomNavPane is {Length: >0})
+                @if (_bottomNavPane is {Length: >0})
                 {
                     <div class="d-flex align-items-end flex-row p-2 ms-0 me-0 ml-nav-pane">
                         @foreach (var b in _bottomNavPane)
@@ -69,12 +65,12 @@
                                 }
                                 else if(b.FaClass != null)
                                 {
-                                    <i class="fa @b.FaClass"/>
+                                    <i class="fa @b.FaClass"></i>
                                 }
                             </a>
                         }
                     </div>
-                }*@
+                }
                 <div class="d-flex flex-row ml-footer align-items-center justify-content-end">
                     <span class="text-muted">Copyright © 2022 — Triasoft</span>
                 </div>
@@ -83,38 +79,3 @@
     </div>
     
 </div>
-
-@code {
-
-    string? _pageTitle;
-    PageNavigation? _navigationPageDescription;
-
-    protected override void OnInitialized()
-    {
-        NavigationManager.LocationChanged += OnLocationChanged;
-
-        UpdateContextData();
-
-        base.OnInitialized();
-    }
-
-    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
-    {
-        UpdateContextData();
-    }
-
-    void UpdateContextData()
-    {
-        var currentUri = new Uri(NavigationManager.Uri);
-        var desc = Navigator.GetPageDescription(currentUri.LocalPath);
-
-        if (desc != null)
-        {
-            _pageTitle = desc.Title;
-            _navigationPageDescription = desc;
-        }
-
-        StateHasChanged();
-    }
-
-}

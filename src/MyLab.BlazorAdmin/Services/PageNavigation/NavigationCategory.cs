@@ -1,4 +1,6 @@
-﻿namespace MyLab.BlazorAdmin.Services.PageNavigation;
+﻿using MyLab.BlazorAdmin.ComponentModel;
+
+namespace MyLab.BlazorAdmin.Services.PageNavigation;
 
 /// <summary>
 /// Describes navigation category
@@ -13,5 +15,5 @@ public class NavigationCategory
     /// <summary>
     /// Nested pages
     /// </summary>
-    public PageNavigationLink[]? Pages { get; set; }
+    public NavigationLink[]? Pages { get; set; }
 }

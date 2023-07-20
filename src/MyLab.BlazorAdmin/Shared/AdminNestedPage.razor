@@ -1,0 +1,39 @@
+﻿@using MyLab.BlazorAdmin.ComponentModel
+
+@implements IDisposable
+@implements INavigationSource
+
+@code {
+    private IDisposable? _childRegistration;
+    private readonly Stack<NavigationLink> _navigation = new();
+
+    /// <summary>
+    /// Gets or sets layout page
+    /// </summary>
+    [CascadingParameter(Name = "LayoutPage")]
+    protected ILayoutPage? Layout { get; set; }
+
+    public IEnumerable<NavigationLink> GetNavigation()
+    {
+        return _navigation.ToArray();
+    }
+
+    public void Dispose()
+    {
+        _childRegistration?.Dispose();
+    }
+
+    protected override void OnInitialized()
+    {
+        _childRegistration = Layout?.RegisterChild(this);
+
+        base.OnInitialized();
+    }
+
+    protected void AddNavigation(NavigationLink item)
+    {
+        if (item == null) throw new ArgumentNullException(nameof(item));
+
+        _navigation.Push(item);
+    }
+}
