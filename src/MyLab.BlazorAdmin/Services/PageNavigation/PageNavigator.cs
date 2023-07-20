@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using System;
 using System.Reflection;
+using MyLab.BlazorAdmin.ComponentModel;
 
 namespace MyLab.BlazorAdmin.Services.PageNavigation;
 
@@ -114,7 +115,7 @@ class PageNavigator : IPageNavigator
         return navigation.Select(g => new NavigationCategory
         {
             Title = g.Title,
-            Pages = g.Nodes?.Select(p => new PageNavigationLink
+            Pages = g.Nodes?.Select(p => new NavigationLink
             {
                 Title = p.Title,
                 FaClass = p.FaClass,
