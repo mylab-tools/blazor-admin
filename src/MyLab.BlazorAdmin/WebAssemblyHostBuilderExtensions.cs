@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
+﻿using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyLab.BlazorAdmin.Services.PageNavigation;
+using Microsoft.Extensions.Options;
+using MyLab.BlazorAdmin.Test;
 
 namespace MyLab.BlazorAdmin
 {
@@ -28,21 +31,52 @@ namespace MyLab.BlazorAdmin
                 options.ProviderOptions.DefaultScopes.Add("offline_access");
                 hBuilder.Configuration.Bind(OidcSectionName, options.ProviderOptions);
             });
-
-            var baseApiAddr = hBuilder.Configuration.GetSection("Test")["BaseApiUrl"] ?? hBuilder.HostEnvironment.BaseAddress;
-
+            
             hBuilder.Services
+                .Configure<TestOptions>(hBuilder.Configuration.GetSection(TestOptions.SectionName))
                 .AddSingleton<IPageNavigator, PageNavigator>()
                 .AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("api"))
-                .AddHttpClient<HttpClient>("api", c => c.BaseAddress = new Uri(baseApiAddr))
+                .AddHttpClient<HttpClient>("api", (sp,c) =>
+                {
+                    var testOpts = sp.GetRequiredService<IOptions<TestOptions>>();
+                    c.BaseAddress = new Uri(GetBaseAddr(testOpts));
+                })
                 .AddHttpMessageHandler(sp =>
                 {
+                    var testOpts = sp.GetRequiredService<IOptions<TestOptions>>();
                     var handler = sp.GetRequiredService<AuthorizationMessageHandler>()
                         .ConfigureHandler(
-                            authorizedUrls: new[] { baseApiAddr }
+                            authorizedUrls: new[] { GetBaseAddr(testOpts) }
                         );
                     return handler;
                 });
+
+            if (hBuilder.Configuration.GetSection($"{TestOptions.SectionName}:{nameof(TestOptions.UseIdentity)}").Exists())
+            {
+                hBuilder.Services
+                    .AddScoped<AuthenticationStateProvider>(sp =>
+                    {
+                        var foundIdentity = GetTestIdentity(sp);
+                        return new TestAuthStateProvider(foundIdentity);
+                    })
+                    .AddScoped<IAccessTokenProvider>(sp =>
+                    {
+                        var foundIdentity = GetTestIdentity(sp);
+                        return new SingleAccessTokenProvider(foundIdentity.Token);
+                    });
+            }
+
+            string GetBaseAddr(IOptions<TestOptions>? opts) => opts?.Value.BaseApiUrl ?? hBuilder.HostEnvironment.BaseAddress;
+
+            TestIdentity GetTestIdentity(IServiceProvider sp)
+            {
+                var testOpts = sp.GetRequiredService<IOptions<TestOptions>>().Value;
+
+                if (!testOpts.Identities.TryGetValue(testOpts.UseIdentity, out var foundTestIdentity))
+                    throw new InvalidOperationException($"Test identity '{testOpts.UseIdentity}' not found");
+
+                return foundTestIdentity;
+            }
         }
     }
 }

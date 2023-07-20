@@ -10,28 +10,30 @@ namespace MyLab.BlazorAdmin.Shared
     /// </summary>
     public partial class AdminLayout : ILayoutPage
     {
-        private readonly IPageNavigator _pageNavigator;
-        private readonly NavigationManager _navigationManager;
-
         object? _currentChild;
         NavigationLink[]? _bottomNavPane;
-
         string? _pageTitle;
         PageNavigation? _navigationPageDescription;
 
         /// <summary>
-        /// Initializes a new instance of <see cref="AdminLayout"/>
+        /// Gets or sets <see cref="NavigationManager"/>
         /// </summary>
-        public AdminLayout(IPageNavigator pageNavigator, NavigationManager navigationManager)
-        {
-            _pageNavigator = pageNavigator;
-            _navigationManager = navigationManager;
-        }
+        [Inject]
+        public NavigationManager? NavigationManager { get; set; }
 
+        /// <summary>
+        /// Gets or sets <see cref="IPageNavigator"/>
+        /// </summary>
+        [Inject]
+        public IPageNavigator? PageNavigator { get; set; }
+        
         /// <inheritdoc />
         protected override void OnInitialized()
         {
-            _navigationManager.LocationChanged += OnLocationChanged;
+            if (NavigationManager == null)
+                throw new InvalidOperationException("NavigationManager is not specified");
+
+            NavigationManager.LocationChanged += OnLocationChanged;
 
             UpdateContextData();
 
@@ -45,8 +47,13 @@ namespace MyLab.BlazorAdmin.Shared
 
         void UpdateContextData()
         {
-            var currentUri = new Uri(_navigationManager.Uri);
-            var desc = _pageNavigator.GetPageDescription(currentUri.LocalPath);
+            if (NavigationManager == null)
+                throw new InvalidOperationException("NavigationManager is not specified");
+            if (PageNavigator == null)
+                throw new InvalidOperationException("PageNavigator is not specified");
+
+            var currentUri = new Uri(NavigationManager.Uri);
+            var desc = PageNavigator.GetPageDescription(currentUri.LocalPath);
 
             if (desc != null)
             {
