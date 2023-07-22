@@ -29,6 +29,12 @@ namespace MyLab.BlazorAdmin.Shared
         public string Copyright { get; set; } = "Copyright ©";
 
         /// <summary>
+        /// Specifies logo image URL
+        /// </summary>
+        [Parameter]
+        public string LogoUrl { get; set; } = "#";
+
+        /// <summary>
         /// Gets or sets <see cref="NavigationManager"/>
         /// </summary>
         [Inject]

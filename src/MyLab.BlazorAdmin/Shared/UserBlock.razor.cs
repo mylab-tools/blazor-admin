@@ -41,8 +41,8 @@ namespace MyLab.BlazorAdmin.Shared
             var authState = await AuthenticationStateProvider!.GetAuthenticationStateAsync();
             _userInfo = await _userInfoProvider.ProvideAsync(authState.User);
 
-            await UpdateKlStateAsync();
             await base.OnInitializedAsync();
+            await UpdateKlStateAsync();
         }
 
         private void OnTimerCallback(object? sender, ElapsedEventArgs e)

@@ -25,7 +25,8 @@ namespace MyLab.BlazorAdmin.Test
         {
             AccessToken t = new AccessToken
             {
-                Value = _accessToken
+                Value = _accessToken,
+                Expires = DateTimeOffset.MaxValue
             };
 
             var tokenResult = new AccessTokenResult(AccessTokenResultStatus.Success, t, "", null);

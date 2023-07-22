@@ -54,6 +54,7 @@ namespace MyLab.BlazorAdmin
                 });
 
             string GetBaseAddr(IOptions<TestOptions>? opts) => opts?.Value.BaseApiUrl ?? hBuilder.HostEnvironment.BaseAddress;
+            
         }
 
         /// <summary>
@@ -67,7 +68,9 @@ namespace MyLab.BlazorAdmin
             if (services == null) throw new ArgumentNullException(nameof(services));
             if (configuration == null) throw new ArgumentNullException(nameof(configuration));
 
-            if (configuration.GetSection($"{TestOptions.SectionName}:{nameof(TestOptions.UseIdentity)}").Exists())
+            var useIdentitySection = configuration.GetSection($"{TestOptions.SectionName}:{nameof(TestOptions.UseIdentity)}");
+
+            if (useIdentitySection.Exists() && !string.IsNullOrWhiteSpace(useIdentitySection.Value))
             {
                 services
                     .AddScoped<AuthenticationStateProvider>(sp =>
