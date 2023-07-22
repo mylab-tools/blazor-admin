@@ -18,9 +18,9 @@ class PageNavigator : IPageNavigator
 
     public PageNavigator(PageNavigationOptions opts)
     {
-        _navigation = CreateNavigation(opts.Categories);
+        _navigation = CreateNavigation(opts.Navigation);
 
-        _index = IndexNavigation(opts.Categories);
+        _index = IndexNavigation(opts.Navigation);
     }
 
     public IEnumerable<NavigationCategory> GetNavigation()
@@ -116,11 +116,11 @@ class PageNavigator : IPageNavigator
         {
             Title = g.Title,
             Pages = g.Nodes?.Select(p => new NavigationLink
-            {
-                Title = p.Title,
-                FaClass = p.FaClass,
-                Url = p.UrlItem
-            }).ToArray()
+            (
+                p.Title,
+                p.UrlItem,
+                p.FaClass
+            )).ToArray()
         }).ToArray();
     }
 

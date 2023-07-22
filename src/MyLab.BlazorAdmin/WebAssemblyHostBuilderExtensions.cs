@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MyLab.BlazorAdmin.Services.PageNavigation;
 using Microsoft.Extensions.Options;
+using MyLab.BlazorAdmin.Services;
 using MyLab.BlazorAdmin.Test;
 
 namespace MyLab.BlazorAdmin
@@ -34,6 +35,7 @@ namespace MyLab.BlazorAdmin
             
             hBuilder.Services
                 .Configure<TestOptions>(hBuilder.Configuration.GetSection(TestOptions.SectionName))
+                .AddScoped<IUserInfoProvider, DefaultUserInfoProvider>()
                 .AddSingleton<IPageNavigator, PageNavigator>()
                 .AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("api"))
                 .AddHttpClient<HttpClient>("api", (sp,c) =>
@@ -51,9 +53,23 @@ namespace MyLab.BlazorAdmin
                     return handler;
                 });
 
-            if (hBuilder.Configuration.GetSection($"{TestOptions.SectionName}:{nameof(TestOptions.UseIdentity)}").Exists())
+            string GetBaseAddr(IOptions<TestOptions>? opts) => opts?.Value.BaseApiUrl ?? hBuilder.HostEnvironment.BaseAddress;
+        }
+
+        /// <summary>
+        /// Adds test services when Test:UseIdentity configuration exists
+        /// </summary>
+        /// <remarks>
+        /// Use it method after all service registrations
+        /// </remarks>
+        public static IServiceCollection TryAddAdminTestServices(this IServiceCollection services, IConfiguration configuration)
+        {
+            if (services == null) throw new ArgumentNullException(nameof(services));
+            if (configuration == null) throw new ArgumentNullException(nameof(configuration));
+
+            if (configuration.GetSection($"{TestOptions.SectionName}:{nameof(TestOptions.UseIdentity)}").Exists())
             {
-                hBuilder.Services
+                services
                     .AddScoped<AuthenticationStateProvider>(sp =>
                     {
                         var foundIdentity = GetTestIdentity(sp);
@@ -63,10 +79,13 @@ namespace MyLab.BlazorAdmin
                     {
                         var foundIdentity = GetTestIdentity(sp);
                         return new SingleAccessTokenProvider(foundIdentity.Token);
+                    })
+                    .AddScoped<IUserInfoProvider>(sp =>
+                    {
+                        var foundIdentity = GetTestIdentity(sp);
+                        return new TestUserInfoProvider(foundIdentity);
                     });
             }
-
-            string GetBaseAddr(IOptions<TestOptions>? opts) => opts?.Value.BaseApiUrl ?? hBuilder.HostEnvironment.BaseAddress;
 
             TestIdentity GetTestIdentity(IServiceProvider sp)
             {
@@ -77,6 +96,8 @@ namespace MyLab.BlazorAdmin
 
                 return foundTestIdentity;
             }
+
+            return services;
         }
     }
 }

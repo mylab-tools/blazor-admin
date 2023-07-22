@@ -14,7 +14,7 @@ class TestAuthStateProvider : AuthenticationStateProvider
     }
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        var identity = new GenericIdentity("foo");
+        var identity = new GenericIdentity(_testIdentity.Name);
 
         return await Task.FromResult(new AuthenticationState(new ClaimsPrincipal(identity)));
     }

@@ -35,6 +35,11 @@
         public string Name { get; set; }
 
         /// <summary>
+        /// User subtitles for User Block
+        /// </summary>
+        public string[] Subtitles { get; set; }
+
+        /// <summary>
         /// Access token
         /// </summary>
         public string Token { get; set; }

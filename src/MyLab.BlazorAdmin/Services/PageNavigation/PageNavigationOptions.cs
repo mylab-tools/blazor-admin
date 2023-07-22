@@ -1,4 +1,6 @@
-﻿namespace MyLab.BlazorAdmin.Services.PageNavigation
+﻿using MyLab.BlazorAdmin.ComponentModel;
+
+namespace MyLab.BlazorAdmin.Services.PageNavigation
 {
     /// <summary>
     /// Describes the page navigation
@@ -8,6 +10,11 @@
         /// <summary>
         /// Gets or sets Navigation category definitions
         /// </summary>
-        public NavigationCategoryDefinition[] Categories { get; set; }
+        public NavigationCategoryDefinition[] Navigation { get; set; }
+
+        /// <summary>
+        /// Gets or sets fasc access links
+        /// </summary>
+        public NavigationLink[] FastLinks { get; set; }
     }
 }

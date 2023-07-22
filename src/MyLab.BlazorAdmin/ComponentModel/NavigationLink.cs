@@ -3,18 +3,8 @@
 /// <summary>
 /// Describes navigation to page
 /// </summary>
-public class NavigationLink
-{
-    /// <summary>
-    /// Title 
-    /// </summary>
-    public string? Title { get; init; }
-    /// <summary>
-    /// target page url
-    /// </summary>
-    public string? Url { get; init; }
-    /// <summary>
-    /// Font Awesome class
-    /// </summary>
-    public string? FaClass { get; init; }
-}
+/// <param name="Title">Title</param>
+/// <param name="Url">Target page url</param>
+/// <param name="FaClass">Font Awesome class</param>
+public record NavigationLink(string Title, string? Url, string? FaClass)
+    : Link(Title, Url ?? "#");

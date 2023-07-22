@@ -33,7 +33,7 @@
 
 @code
 {
-    public IEnumerable<Assembly> RealAdditionalAssemblies => AdditionalAssemblies != null
+    private IEnumerable<Assembly> RealAdditionalAssemblies => AdditionalAssemblies != null
         ? AdditionalAssemblies.Union(Enumerable.Repeat(typeof(AdminApp).Assembly, 1))
         : Enumerable.Repeat(typeof(AdminApp).Assembly, 1);
 

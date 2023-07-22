@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Routing;
+using Microsoft.Extensions.Options;
 using MyLab.BlazorAdmin.ComponentModel;
 using MyLab.BlazorAdmin.Services.PageNavigation;
 
@@ -16,6 +17,18 @@ namespace MyLab.BlazorAdmin.Shared
         PageNavigation? _navigationPageDescription;
 
         /// <summary>
+        /// Specifies header page text
+        /// </summary>
+        [Parameter]
+        public string Header { get; set; } = "MyLab Admin";
+
+        /// <summary>
+        /// Specifies copyright text
+        /// </summary>
+        [Parameter]
+        public string Copyright { get; set; } = "Copyright ©";
+
+        /// <summary>
         /// Gets or sets <see cref="NavigationManager"/>
         /// </summary>
         [Inject]
@@ -26,7 +39,19 @@ namespace MyLab.BlazorAdmin.Shared
         /// </summary>
         [Inject]
         public IPageNavigator? PageNavigator { get; set; }
-        
+
+        /// <summary>
+        /// Gets or sets <see cref="PageNavigationOptions"/>
+        /// </summary>
+        [Inject]
+        public IOptions<PageNavigationOptions> NavOptions { get; set; }
+
+        /// <summary>
+        /// Gets or sets child content
+        /// </summary>
+        [Parameter]
+        public RenderFragment ChildContent { get; set; }
+
         /// <inheritdoc />
         protected override void OnInitialized()
         {

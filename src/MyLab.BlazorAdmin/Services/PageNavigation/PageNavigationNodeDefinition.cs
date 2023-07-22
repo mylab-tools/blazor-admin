@@ -8,7 +8,7 @@ public class PageNavigationNodeDefinition
     /// <summary>
     /// Title
     /// </summary>
-    public string? Title { get; init; }
+    public string Title { get; init; }
     /// <summary>
     /// Url path item
     /// </summary>
