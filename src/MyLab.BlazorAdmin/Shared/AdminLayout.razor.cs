@@ -9,7 +9,7 @@ namespace MyLab.BlazorAdmin.Shared
     /// <summary>
     /// The default admin layout
     /// </summary>
-    public partial class AdminLayout : ILayoutPage
+    public partial class AdminLayout : IComponentRegistrar
     {
         object? _currentChild;
         NavigationLink[]? _bottomNavPane;
@@ -50,13 +50,13 @@ namespace MyLab.BlazorAdmin.Shared
         /// Gets or sets <see cref="PageNavigationOptions"/>
         /// </summary>
         [Inject]
-        public IOptions<PageNavigationOptions> NavOptions { get; set; }
+        public IOptions<PageNavigationOptions>? NavOptions { get; set; }
 
         /// <summary>
         /// Gets or sets child content
         /// </summary>
         [Parameter]
-        public RenderFragment ChildContent { get; set; }
+        public RenderFragment? ChildContent { get; set; }
 
         /// <inheritdoc />
         protected override void OnInitialized()
@@ -103,6 +103,7 @@ namespace MyLab.BlazorAdmin.Shared
             if (child is INavigationSource navSource)
             {
                 _bottomNavPane = navSource.GetNavigation().ToArray();
+                StateHasChanged();
             }
 
             return new ChildUnregistrar(child, UnregisterChild);

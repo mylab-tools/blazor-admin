@@ -11,18 +11,21 @@
     /// Gets or sets layout page
     /// </summary>
     [CascadingParameter(Name = "LayoutPage")]
-    protected ILayoutPage? Layout { get; set; }
+    protected IComponentRegistrar? Layout { get; set; }
 
+    /// <inheritdoc />
     public IEnumerable<NavigationLink> GetNavigation()
     {
         return _navigation.ToArray();
     }
 
+    /// <inheritdoc />
     public void Dispose()
     {
         _childRegistration?.Dispose();
     }
 
+    /// <inheritdoc />
     protected override void OnInitialized()
     {
         _childRegistration = Layout?.RegisterChild(this);
@@ -30,6 +33,9 @@
         base.OnInitialized();
     }
 
+    /// <summary>
+    /// Adds navigation buttons
+    /// </summary>
     protected void AddNavigation(NavigationLink item)
     {
         if (item == null) throw new ArgumentNullException(nameof(item));

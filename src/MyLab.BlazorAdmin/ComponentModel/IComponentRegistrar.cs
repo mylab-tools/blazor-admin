@@ -1,9 +1,9 @@
 ﻿namespace MyLab.BlazorAdmin.ComponentModel
 {
     /// <summary>
-    /// Provides interaction with layout page
+    /// Registers a component 
     /// </summary>
-    public interface ILayoutPage
+    public interface IComponentRegistrar
     {
         /// <summary>
         /// Registers child component

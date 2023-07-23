@@ -7,6 +7,7 @@ using MyLab.BlazorAdmin.Services.PageNavigation;
 using Microsoft.Extensions.Options;
 using MyLab.BlazorAdmin.Services;
 using MyLab.BlazorAdmin.Test;
+using System.Net.Http;
 
 namespace MyLab.BlazorAdmin
 {
@@ -37,11 +38,24 @@ namespace MyLab.BlazorAdmin
                 .Configure<TestOptions>(hBuilder.Configuration.GetSection(TestOptions.SectionName))
                 .AddScoped<IUserInfoProvider, DefaultUserInfoProvider>()
                 .AddSingleton<IPageNavigator, PageNavigator>()
-                .AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("api"))
-                .AddHttpClient<HttpClient>("api", (sp,c) =>
+                .AddScoped(sp =>
+                {
+                    var httpClient = sp.GetRequiredService<IHttpClientFactory>()
+                        .CreateClient("backend");
+                    //var testOpts = sp.GetRequiredService<IOptions<TestOptions>>();
+                    //httpClient.BaseAddress = new Uri(GetBaseAddr(testOpts));
+
+                    return httpClient;
+                })
+                .AddScoped<IBackendAddrProvider>(sp =>
                 {
                     var testOpts = sp.GetRequiredService<IOptions<TestOptions>>();
-                    c.BaseAddress = new Uri(GetBaseAddr(testOpts));
+                    return new BackendAddrProvider(GetBaseAddr(testOpts));
+                })
+                .AddHttpClient("backend", (sp, cl) =>
+                {
+                    var testOpts = sp.GetRequiredService<IOptions<TestOptions>>();
+                    cl.BaseAddress = new Uri(GetBaseAddr(testOpts));
                 })
                 .AddHttpMessageHandler(sp =>
                 {
@@ -51,28 +65,14 @@ namespace MyLab.BlazorAdmin
                             authorizedUrls: new[] { GetBaseAddr(testOpts) }
                         );
                     return handler;
-                });
+                })
+                ;
 
-            string GetBaseAddr(IOptions<TestOptions>? opts) => opts?.Value.BaseApiUrl ?? hBuilder.HostEnvironment.BaseAddress;
-            
-        }
-
-        /// <summary>
-        /// Adds test services when Test:UseIdentity configuration exists
-        /// </summary>
-        /// <remarks>
-        /// Use it method after all service registrations
-        /// </remarks>
-        public static IServiceCollection TryAddAdminTestServices(this IServiceCollection services, IConfiguration configuration)
-        {
-            if (services == null) throw new ArgumentNullException(nameof(services));
-            if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-
-            var useIdentitySection = configuration.GetSection($"{TestOptions.SectionName}:{nameof(TestOptions.UseIdentity)}");
+            var useIdentitySection = hBuilder.Configuration.GetSection($"{TestOptions.SectionName}:{nameof(TestOptions.UseIdentity)}");
 
             if (useIdentitySection.Exists() && !string.IsNullOrWhiteSpace(useIdentitySection.Value))
             {
-                services
+                hBuilder.Services
                     .AddScoped<AuthenticationStateProvider>(sp =>
                     {
                         var foundIdentity = GetTestIdentity(sp);
@@ -100,7 +100,8 @@ namespace MyLab.BlazorAdmin
                 return foundTestIdentity;
             }
 
-            return services;
+            string GetBaseAddr(IOptions<TestOptions>? testOpts) => testOpts?.Value.BaseApiUrl ?? hBuilder.HostEnvironment.BaseAddress;
+            
         }
     }
 }

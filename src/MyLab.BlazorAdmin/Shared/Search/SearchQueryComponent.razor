@@ -1,0 +1,43 @@
+﻿@using MyLab.BlazorAdmin.Tools.Search
+
+@inherits SearchParameterComponent
+
+<div class="input-group">
+    <input type="text"
+           class="form-control"
+           placeholder="@PlaceHolder"
+           @bind="Query"
+           @onkeydown="OnInputEnter">
+    <button class="btn btn-primary" type="button" @onclick="OnSearchStarted">Search</button>
+</div>
+
+@code {
+
+    /// <summary>
+    /// Gets or sets query string
+    /// </summary>
+    [Parameter]
+    public string? Query { get; set; }
+
+    /// <summary>
+    /// Gets or sets query string place holder
+    /// </summary>
+    [Parameter]
+    public string? PlaceHolder { get; set; }
+
+    /// <inheritdoc />
+    public override void ApplyParameters(SearchRequest request)
+    {
+        request.Query = Query;
+    }
+
+    private void OnInputEnter(KeyboardEventArgs arg)
+    {
+        if (arg.Code == "Enter" || arg.Code == "NumpadEnter")
+        {
+            StateHasChanged();
+            OnSearchStarted();
+        }
+
+    }
+}
