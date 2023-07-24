@@ -1,0 +1,146 @@
+﻿html {
+    height: 100%;
+}
+
+.min-100h, body, #app {
+    min-height: 100vh;
+}
+
+.ml-main-wrapper {
+    align-items: stretch;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+
+.ml-main {
+    background: #f3f6fb;
+}
+
+.ml-header {
+    min-height: 70px;
+}
+
+.ml-header-link {
+    color: #c4cedd;
+    margin-left: 20px;
+}
+
+.ml-content-header {
+    min-height: 90px;
+}
+
+.ml-header-title {
+    color: #fff;
+    font-size: 1.64062rem;
+}
+
+.ml-main-part {
+    position: relative;
+}
+
+.ml-sidebar {
+    min-width: 300px;
+}
+
+.ml-sidebar-header {
+    background: #011b3e;
+}
+
+.ml-sidenav-title {
+    text-transform: uppercase;
+    font-size: .6875rem;
+    letter-spacing: .10em;
+    font-weight: 700;
+    margin-left: 0px;
+    padding: 0.375rem 1.5rem;
+    color: #adb5bd;
+}
+.ml-sidenav {
+    list-style: none;
+    padding-left: 0px;
+}
+
+.ml-sidenav-link {
+    margin: 0 0.5rem;
+    padding: 0.65rem 0.75rem;
+    color: #1f4875;
+    border-radius: 0.2rem;
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.ml-sidenav-link.active {
+    background: #e9ecef;
+    color: #212529;
+}
+
+
+.ml-sidenav-link:hover {
+    color: #212529;
+}
+
+.ml-sidenav-link > i {
+    width: 30px;
+    color: #1f4875;
+}
+
+.ml-header-link-delimiter {
+    color: white;
+}
+
+.ml-content-header-link {
+    color: white;
+}
+
+.ml-content-header-link:hover {
+    color: white;
+}
+
+.ml-adv-link {
+    text-decoration: none;
+}
+
+.ml-adv-link:hover {
+    text-decoration: underline;
+}
+
+.ml-page-content-wrapper {
+    background: white;
+}
+
+.ml-page-content-header {
+    font-size: 1.4rem;
+}
+
+.ml-nav-pane {
+    background: #e9ecef;
+}
+
+.ml-footer {
+    min-height: 60px;
+}
+
+.ml-sidebar-gauge-link {
+    color: #f26522;
+    font-size: .8rem;
+}
+
+    .ml-sidebar-gauge-link:hover {
+        color: #f26522;
+    }
+
+.ml-sidebar-gauge {
+    text-decoration: none;
+    color: inherit;
+}
+
+.ml-sidebar-gauge:hover {
+    color: inherit;
+}
+
+.ml-sidebar-gauge > a {
+    text-decoration: none;
+    color: inherit;
+}

@@ -1,0 +1,109 @@
+﻿@using MyLab.BlazorAdmin.Tools.Search
+
+@inherits SearchParameterComponent
+
+<div class="d-flex flex-row align-items-center" style="height: 40px">
+    @if (Filters != null && Filters.Length != 0)
+    {
+        <span>Search for </span>
+        <span class="dropdown">
+            <a aria-expanded="false"
+               aria-haspopup="true"
+               data-target="#"
+               data-bs-toggle="dropdown"
+               href="#"
+               role="button"
+               class="ms-1">
+                <span>@GetCurrentFilterTitle()</span>
+                <i class="fa fa-caret-down"/>
+            </a>
+            <ul class="dropdown-menu">
+                @foreach (var f in Filters)
+                {
+                    <li>
+                        <a class="dropdown-item" href="" role="button" @onclick="() => SelectFilter(f.Id)" @onclick:preventDefault>@f.Title</a>
+                    </li>
+                }
+            </ul>
+        </span>
+    }
+    @if (Sortings != null && Sortings.Length != 0)
+    {
+        <span>ordered by </span>
+        <span class="dropdown">
+            <a aria-expanded="false"
+               aria-haspopup="true"
+               data-target="#"
+               data-bs-toggle="dropdown"
+               href="#"
+               role="button"
+               class="ms-1">
+                <span>@GetCurrentSortingTitle()</span>
+                <i class="fa fa-caret-down" />
+            </a>
+            <ul class="dropdown-menu">
+                @foreach (var s in Sortings)
+                {
+                    <li>
+                        <a class="dropdown-item" href="" role="button" @onclick="() => SelectSorting(s.Id)" @onclick:preventDefault>@s.Title</a>
+                    </li>
+                }
+            </ul>
+        </span>
+    }
+</div>
+
+@code {
+
+    FilterDesc? _currentFilter;
+    SortingDesc? _currentSorting;
+
+    /// <summary>
+    /// Gets or sets search filters
+    /// </summary>
+    [Parameter]
+    public FilterDesc[]? Filters { get; set; }
+
+    /// <summary>
+    /// Gets or sets search sortings
+    /// </summary>
+    [Parameter]
+    public SortingDesc[]? Sortings{ get; set; }
+
+    /// <inheritdoc />
+    public override void ApplyParameters(SearchRequest request)
+    {
+        request.FilterId = _currentFilter?.Id;
+        request.SortId = _currentSorting?.Id;
+    }
+
+    private string? GetCurrentFilterTitle()
+    {
+        return _currentFilter != null
+            ? _currentFilter.Title
+            : Filters?.FirstOrDefault(f => f.Id == null)?.Title;
+    }
+
+    private string? GetCurrentSortingTitle()
+    {
+        return _currentSorting != null
+            ? _currentSorting.Title
+            : Sortings?.FirstOrDefault(f => f.Id == null)?.Title;
+    }
+
+    private void SelectFilter(string? fId)
+    {
+        if(Filters != null)
+            _currentFilter = Filters.FirstOrDefault(f => f.Id == fId);
+            
+        OnSearchStarted();
+    }
+
+    private void SelectSorting(string? sId)
+    {
+        if (Sortings != null)
+            _currentSorting = Sortings.FirstOrDefault(s => s.Id == sId);
+
+        OnSearchStarted();
+    }
+}

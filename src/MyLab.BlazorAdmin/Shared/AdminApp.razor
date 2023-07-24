@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Components.Routing
+@using System.Reflection
+
+<CascadingAuthenticationState>
+    <Router AppAssembly="@AppAssembly"
+            AdditionalAssemblies="@RealAdditionalAssemblies">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@DefaultLayout">
+                <NotAuthorized>
+                    @if (context.User.Identity?.IsAuthenticated != true)
+                    {
+                        <RedirectToLogin/>
+                    }
+                    else
+                    {
+                        <p role="alert">Access Denied</p>
+                    }
+                </NotAuthorized>
+                <Authorizing>
+                    <Authorizing/>
+                </Authorizing>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <PageTitle>Not Found</PageTitle>
+            <LayoutView Layout="@typeof(InitialLayout)">
+                <p role="alert">Not Found</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+@code
+{
+    private IEnumerable<Assembly> RealAdditionalAssemblies => AdditionalAssemblies != null
+        ? AdditionalAssemblies.Union(Enumerable.Repeat(typeof(AdminApp).Assembly, 1))
+        : Enumerable.Repeat(typeof(AdminApp).Assembly, 1);
+
+    /// <summary>
+    /// Gets or sets the assembly that should be searched for components matching the URI.
+    /// </summary>
+    [Parameter]
+    public Assembly? AppAssembly { get; set; }
+
+    /// <summary>
+    /// Gets or sets a collection of additional assemblies that should be searched for components that can match URIs.
+    /// </summary>
+    [Parameter]
+    public IEnumerable<Assembly>? AdditionalAssemblies { get; set; }
+
+    /// <summary>
+    /// Gets or sets the type of a layout to be used if the page does not declare any layout. If specified, the type must implement Microsoft.AspNetCore.Components.IComponent and accept a parameter named Microsoft.AspNetCore.Components.LayoutComponentBase.Body.
+    /// </summary>
+    [Parameter]
+    public Type DefaultLayout { get; set; } = typeof(InitialLayout);
+}

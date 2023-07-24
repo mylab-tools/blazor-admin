@@ -1,0 +1,19 @@
+﻿@typeparam T
+<CascadingValue Value="this" Name="SearchPage">
+    @if (Query != null)
+    {
+        @Query
+    }
+
+    @if (OptionsPane != null)
+    {
+        @OptionsPane
+    }
+
+    <SearchResultTable PageIndex="_pageIndex" 
+                       PageSize="PageSize" 
+                       SearchResult="_searchResult"
+                       ItemTemplate="ItemTemplate"
+                       PageIndexChanged="PageIndexChanged">
+    </SearchResultTable>
+</CascadingValue>

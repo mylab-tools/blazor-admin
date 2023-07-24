@@ -1,0 +1,36 @@
+﻿@page "/authentication/{action}"
+@layout InitialLayout
+
+@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+@using MyLab.BlazorAdmin.Shared
+@using Microsoft.AspNetCore.Authorization
+
+@attribute [AllowAnonymous]
+
+<RemoteAuthenticatorView Action="@Action">
+    <LogInFailed>
+        <h3>Log In Failed</h3>
+    </LogInFailed>
+    <LogOutFailed>
+        <h3>Log Out Failed</h3>
+    </LogOutFailed>
+    <LoggingIn>
+        <h3>Logging In ...</h3>
+    </LoggingIn>
+    <LogOut>
+        <h3>Log Out ...</h3>
+    </LogOut>
+    <LogOutSucceeded>
+        <h3>Log Out Succeeded</h3>
+    </LogOutSucceeded>
+    <CompletingLoggingIn>
+        <h3>Completing Logging In ...</h3>
+    </CompletingLoggingIn>
+    <CompletingLogOut>
+        <h3>Completing Log Out ...</h3>
+    </CompletingLogOut>
+</RemoteAuthenticatorView>
+
+@code{
+    [Parameter] public string? Action { get; set; }
+}

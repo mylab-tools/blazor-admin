@@ -1,0 +1,59 @@
+﻿@typeparam T
+
+@if (_searchResult != null)
+{
+    if (_searchResult.Total != 0)
+    {
+        <div class="d-flex flex-row-reverse align-items-center p-3 pe-0">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary @(_prevPageEnabled ? "" : "disabled")" @onclick="OnPrevPageHandledAsync">
+                    <i class="fa fa-angle-left"/>
+                </button>
+                <button type="button" class="btn btn-outline-primary @(_nextPageEnabled ? "" : "disabled")" @onclick="OnNextPageHandledAsync">
+                    <i class="fa fa-angle-right"/>
+                </button>
+            </div>
+            <span class="me-3">@(PageIndex+1) из @GetTotalPageNumber() страниц. Всего @(_searchResult?.Total) записей. </span>
+        </div>
+
+        <table class="table adm-data-table">
+            <tbody>
+            @if (_searchResult?.Items != null && ItemTemplate != null)
+            {
+                var users = _searchResult.Items
+                    .Select(e => e);
+
+                foreach (var user in users)
+                {
+                    if (user.Content != null && ItemTemplate != null)
+                        @ItemTemplate(user.Content);
+                }
+            }
+            </tbody>
+        </table>
+
+        <div class="d-flex flex-row-reverse align-items-center p-3 pe-0">
+            <div class="btn-group" role="group">
+                <button type="button" class="btn btn-outline-primary @(_prevPageEnabled ? "" : "disabled")" @onclick="OnPrevPageHandledAsync">
+                    <i class="fa fa-angle-left"/>
+                </button>
+                <button type="button" class="btn btn-outline-primary @(_nextPageEnabled ? "" : "disabled")" @onclick="OnNextPageHandledAsync">
+                    <i class="fa fa-angle-right"/>
+                </button>
+            </div>
+            <span class="me-3">@(PageIndex + 1) из @GetTotalPageNumber() страниц. Всего @(_searchResult?.Total) записей. </span>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger" role="alert">
+            Ничего не найдено
+        </div>
+    }
+}
+else
+{
+    <div class="alert alert-primary" role="alert">
+        Введите критерии поиска и нажмите "Найти", чтобы получить результат поиска.
+    </div>
+}

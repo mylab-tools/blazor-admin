@@ -1,0 +1,29 @@
+﻿<div class="d-flex flex-column align-items-center py-4">
+    <img src="@(_userInfo?.IconUrl ?? "_content/MyLab.BlazorAdmin/img/user.png")" class="rounded-circle ml-sidebar-user-icon mb-3">
+    <span class="ml-sidebar-username fw-bold">@_userInfo?.Name</span>
+    @if (_userInfo?.Subtitles != null)
+    {
+        @foreach (var subtitle in _userInfo.Subtitles)
+        {
+            <small>@subtitle</small>
+        }
+    }
+    <div class="d-flex flex-row pt-4">
+        @if (_metrics != null)
+        {
+            @foreach (var m in _metrics)
+            {
+                <div class="d-flex flex-column ms-4 me-4 align-items-center" title="@m.Title">
+                    <a href="#" class="fw-bold ml-sidebar-gauge ">
+                        <span>@m.Value</span>
+                        <i class="fa-s fas fa-@m.FaClass"></i>
+                    </a>
+                    @if (m.AdditionalLink != null)
+                    {
+                        <a href="@m.AdditionalLink.Url" class="ml-sidebar-gauge-link">@m.AdditionalLink.Title</a>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
