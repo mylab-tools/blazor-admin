@@ -8,6 +8,7 @@ using Microsoft.Extensions.Options;
 using MyLab.BlazorAdmin.Services;
 using MyLab.BlazorAdmin.Test;
 using System.Net.Http;
+using Microsoft.AspNetCore.Components;
 
 namespace MyLab.BlazorAdmin
 {
@@ -76,7 +77,8 @@ namespace MyLab.BlazorAdmin
                     .AddScoped<AuthenticationStateProvider>(sp =>
                     {
                         var foundIdentity = GetTestIdentity(sp);
-                        return new TestAuthStateProvider(foundIdentity);
+                        var navigationManager = sp.GetRequiredService<NavigationManager>();
+                        return new TestAuthStateProvider(foundIdentity, navigationManager);
                     })
                     .AddScoped<IAccessTokenProvider>(sp =>
                     {
