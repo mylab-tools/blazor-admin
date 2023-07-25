@@ -11,10 +11,5 @@ namespace MyLab.BlazorAdmin.Services.PageNavigation
         /// Gets or sets Navigation category definitions
         /// </summary>
         public NavigationCategoryDefinition[] Navigation { get; set; }
-
-        /// <summary>
-        /// Gets or sets fasc access links
-        /// </summary>
-        public NavigationLink[] FastLinks { get; set; }
     }
 }

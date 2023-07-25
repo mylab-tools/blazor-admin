@@ -16,13 +16,9 @@
         <div class="ml-main d-flex flex-column flex-fill">
             <nav class="navbar ml-header ps-4 pe-4 ml-main-part">
                 <div class="d-flex flex-row ms-auto">
-                    @if (NavOptions.Value.FastLinks is {} fastLinks)
-                    {
-                        @foreach (var fLink in fastLinks)
-                        {
-                            <a href="@fLink.Url" class="ml-header-link" title="@fLink.Title"><i class="fas fa-lg @fLink.FaClass"></i></a>
-                        }
-                    }
+                    
+                    @FastActionIcons
+
                 </div>
             </nav>
             <div class="ml-content-header d-flex flex-column ps-4 ml-main-part">

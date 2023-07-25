@@ -1,0 +1,12 @@
+﻿@using Microsoft.AspNetCore.Components.WebAssembly.Authentication
+<a @onclick="OnClick" class="ml-header-link" title="Sign out"><i class="fas fa-lg fa-sign-out-alt"></i></a>
+
+@inject NavigationManager NavigationManager
+
+@code
+{
+    private void OnClick()
+    {
+        NavigationManager.NavigateToLogout("authentication/logout");
+    }
+}

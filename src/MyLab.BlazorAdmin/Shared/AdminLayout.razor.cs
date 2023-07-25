@@ -47,16 +47,16 @@ namespace MyLab.BlazorAdmin.Shared
         public IPageNavigator? PageNavigator { get; set; }
 
         /// <summary>
-        /// Gets or sets <see cref="PageNavigationOptions"/>
-        /// </summary>
-        [Inject]
-        public IOptions<PageNavigationOptions>? NavOptions { get; set; }
-
-        /// <summary>
         /// Gets or sets child content
         /// </summary>
         [Parameter]
         public RenderFragment? ChildContent { get; set; }
+
+        /// <summary>
+        /// Gets or sets fast action icon components
+        /// </summary>
+        [Parameter]
+        public RenderFragment? FastActionIcons { get; set; }
 
         /// <inheritdoc />
         protected override void OnInitialized()
