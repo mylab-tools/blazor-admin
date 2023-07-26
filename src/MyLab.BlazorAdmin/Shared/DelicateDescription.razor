@@ -1,0 +1,133 @@
+﻿@using Blazored.LocalStorage
+@using Microsoft.JSInterop
+@using System.Security.Cryptography
+@using System.Text
+@using Microsoft.Extensions.Logging
+
+@inject ILocalStorageService LocalStorage
+@inject IJSRuntime Js
+@inject ILogger<DelicateDescription> Log
+
+@if (_expanded)
+{
+    <div class="alert alert-secondary alert-dismissible fade show" id="@_childWrapperId">
+        @ChildContent
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="CollapseRequestedAsync"></button>
+    </div>
+}
+else
+{
+    <a href="#" class="text-end" @onclick="ExpandRequestedAsync">@CollapsedStateTitle</a>
+}
+
+@code {
+
+    bool _expanded;
+    string? _storageStateId;
+    readonly string _childWrapperId = Guid.NewGuid().ToString("N");
+
+    /// <summary>
+    /// Block content
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+    /// <summary>
+    /// Determines that the component is expanded if there is no saved state
+    /// </summary>
+    /// <remarks>
+    /// true by default
+    /// </remarks>
+    [Parameter]
+    public bool ExpandedByDefault { get; set; } = true;
+
+    /// <summary>
+    /// Determines a title when the component is in collapsed state
+    /// </summary>
+    [Parameter]
+    public string CollapsedStateTitle { get; set; } = "More detailed...";
+
+    ///// <inheritdoc />
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    await base.OnInitializedAsync();
+
+    //    await InitControlNameAsync();
+
+    //    if (_storageStateId != null)
+    //    {
+    //        var expandedState = await LocalStorage.GetItemAsync<bool?>(_storageStateId);
+    //        _expanded = expandedState ?? ExpandedByDefault;
+    //    }
+    //    else
+    //    {
+    //        _expanded = ExpandedByDefault;
+    //    }
+    //}
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await InitControlNameAsync();
+
+        if (_storageStateId != null)
+        {
+            var expandedState = await LocalStorage.GetItemAsync<bool?>(_storageStateId);
+            _expanded = expandedState ?? ExpandedByDefault;
+        }
+        else
+        {
+            _expanded = ExpandedByDefault;
+        }
+
+        await base.OnAfterRenderAsync(firstRender);
+    }
+
+    private async Task InitControlNameAsync()
+    {
+        string? childHtml = null;
+
+        try
+        {
+            await Js.InvokeAsync<string>("getElementHtmlText", _childWrapperId);
+        }
+        catch (Exception e)
+        {
+            Log.Log(LogLevel.Error, default, e, e.Message);
+        }
+
+        if (childHtml == null)
+        {
+            Log.Log(LogLevel.Warning, "Can't calculate storage state unique id. Collapsed will not saved");
+        }
+        else
+        {
+
+            var md5Hash = SHA1.HashData(Encoding.UTF8.GetBytes(childHtml));
+            var hashStr = BitConverter.ToString(md5Hash).Replace("-", "");
+
+            _storageStateId = $"DelicateDescription_{hashStr}_expanded";
+        }
+    }
+
+    private async Task CollapseRequestedAsync()
+    {
+        _expanded = false;
+
+       await SaveStateAsync();
+    }
+
+    private async Task ExpandRequestedAsync()
+    {
+        _expanded = true;
+
+        await SaveStateAsync();
+    }
+
+    private async Task SaveStateAsync()
+    {
+        if (_storageStateId != null)
+        {
+            await LocalStorage.SetItemAsync(_storageStateId, _expanded);
+        }
+    }
+
+}

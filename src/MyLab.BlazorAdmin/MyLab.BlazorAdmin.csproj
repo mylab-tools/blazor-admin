@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="7.0.9" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.9" />
@@ -31,6 +32,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="7.0.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="MyLab.ApiClient" Version="3.18.27" />
+    <PackageReference Include="MyLab.Log.Dsl" Version="3.6.5" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0" />
   </ItemGroup>
 

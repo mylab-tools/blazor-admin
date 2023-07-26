@@ -27,6 +27,12 @@ public partial class SearchPage<T> : IDisposable, IComponentRegistrar
     /// </summary>
     [Parameter]
     public RenderFragment? OptionsPane { get; set; }
+    
+    /// <summary>
+    /// Specifies a search description
+    /// </summary>
+    [Parameter]
+    public RenderFragment? Description { get; set; }
 
     /// <summary>
     /// Specifies query page size
