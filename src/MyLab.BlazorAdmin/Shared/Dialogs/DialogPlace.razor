@@ -1,10 +1,10 @@
-﻿
-
+﻿@using MyLab.BlazorAdmin.Services.Dialogs
 @implements MyLab.BlazorAdmin.Services.Dialogs.IDialogPlace
 
 @code {
-    
-    public void AddDialog<TContent>(DialogDescription description)
+
+    /// <inheritdoc />
+    public IDialog CreateDialog(DialogDescription description)
     {
         throw new NotImplementedException();
     }

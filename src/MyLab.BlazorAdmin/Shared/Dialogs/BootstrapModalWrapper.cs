@@ -1,30 +1,56 @@
 ﻿using Microsoft.AspNetCore.Components;
 using Microsoft.JSInterop;
+using MyLab.BlazorAdmin.Services.Dialogs;
+using MyLab.BlazorAdmin.Tools;
 
 namespace MyLab.BlazorAdmin.Shared.Dialogs;
 
-class BootstrapModalWrapper
+class BootstrapModalWrapper : IDialog
 {
     private readonly IJSRuntime _js;
     private readonly string _elementId;
     private readonly DotNetObjectReference<BootstrapModalWrapper> _ref;
 
-    public EventCallback OnShow;
-    public EventCallback OnShown;
-    public EventCallback OnHide;
-    public EventCallback OnHidden;
-    public EventCallback OnHidePrevented;
+    public event AsyncEventHandler? Opening;
+    public event AsyncEventHandler? Opened;
+    public event AsyncEventHandler? Closing;
+    public event AsyncEventHandler? Closed;
+    public event AsyncEventHandler? ClosePrevented;
 
     [JSInvokable]
-    public async Task OnShowModal() => await OnShow.InvokeAsync();
+    public async Task OnShowModal()
+    {
+        if (Opening != null)
+            await Opening(this, EventArgs.Empty);
+    }
+
     [JSInvokable]
-    public async Task OnShownModal() => await OnShown.InvokeAsync();
+    public async Task OnShownModal()
+    {
+        if (Opened != null)
+            await Opened(this, EventArgs.Empty);
+    }
+
     [JSInvokable]
-    public async Task OnHideModal() => await OnHide.InvokeAsync();
+    public async Task OnHideModal()
+    {
+        if (Closing != null)
+            await Closing(this, EventArgs.Empty);
+    }
+
     [JSInvokable]
-    public async Task OnHiddenModal() => await OnHidden.InvokeAsync();
+    public async Task OnHiddenModal()
+    {
+        if (Closed != null)
+            await Closed(this, EventArgs.Empty);
+    }
+
     [JSInvokable]
-    public async Task OnHidePreventedModal() => await OnHidePrevented.InvokeAsync();
+    public async Task OnHidePreventedModal()
+    {
+        if (ClosePrevented != null)
+            await ClosePrevented(this, EventArgs.Empty);
+    }
 
     /// <summary>
     /// Initializes a new instance of <see cref="BootstrapModalWrapper"/>
@@ -34,7 +60,7 @@ class BootstrapModalWrapper
         _js = js ?? throw new ArgumentNullException(nameof(js));
         _elementId = elementId ?? throw new ArgumentNullException(nameof(elementId));
 
-        _ref = DotNetObjectReference.Create(this);
+        _ref = DotNetObjectReference.Create(this); 
     }
 
     public ValueTask InitializeAsync(DialogBackdrop backdrop)
@@ -59,12 +85,12 @@ class BootstrapModalWrapper
         return _js.InvokeVoidAsync("window.mylabAdmin.modal.initialize", _elementId, backdropObj, _ref);
     }
 
-    public ValueTask ShowAsync()
+    public ValueTask OpenAsync()
     {
         return _js.InvokeVoidAsync("window.mylabAdmin.modal.show", _elementId);
     }
 
-    public ValueTask HideAsync()
+    public ValueTask CloseAsync()
     {
         return _js.InvokeVoidAsync("window.mylabAdmin.modal.hide", _elementId);
     }
