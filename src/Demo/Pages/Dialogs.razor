@@ -1,7 +1,21 @@
 ﻿@page "/dialogs"
 
-<h3>Dialogs</h3>
+@inherits AdminNestedPage
+
+<button type="button" class="btn btn-primary" @onclick="OnClickAsync">
+    Show message "Hello, World!"
+</button>
+
+<ErrorMessage @ref="ErrorMsg"/>
 
 @code {
+
+    ErrorMessage? ErrorMsg { get; set; }
+
+    private async Task OnClickAsync()
+    {
+        if(ErrorMsg!= null)
+            await ErrorMsg.OpenAsync();
+    }
 
 }
