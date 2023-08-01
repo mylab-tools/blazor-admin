@@ -32,6 +32,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="7.0.9" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="MyLab.ApiClient" Version="3.18.27" />
+    <PackageReference Include="MyLab.ExpressionTools" Version="1.0.2" />
     <PackageReference Include="MyLab.Log.Dsl" Version="3.6.5" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0" />
   </ItemGroup>

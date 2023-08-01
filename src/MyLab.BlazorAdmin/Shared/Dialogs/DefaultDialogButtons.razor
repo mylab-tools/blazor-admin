@@ -1,0 +1,33 @@
+﻿@if (OkYesButton != null)
+{
+    <button type="button" class="btn btn-primary">@OkYesButton.Title</button>
+}
+
+@if (NoButton != null)
+{
+    <button type="button" class="btn">@NoButton.Title</button>
+}
+
+@if (CancelButton != null)
+{
+    <button type="button" class="btn">@CancelButton.Title</button>
+}
+
+@code {
+
+    /// <summary>
+    /// Describes the positive button
+    /// </summary>
+    [Parameter]
+    public DialogButtonDescription? OkYesButton { get; set; } 
+    /// <summary>
+    /// Describes the negative button
+    /// </summary>
+    [Parameter]
+    public DialogButtonDescription? NoButton { get; set; }
+    /// <summary>
+    /// Describes the cancel button
+    /// </summary>
+    [Parameter]
+    public DialogButtonDescription? CancelButton { get; set; }
+}

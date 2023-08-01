@@ -1,0 +1,21 @@
+﻿@inherits DialogBase
+
+<DialogContainer @ref="Container" Title="@Title">
+    <div class="d-flex flex-row">
+        <div class="p-2"><i class="fa-solid fa-circle-xmark"></i></div>
+        <div class="p-2">@Messasge</div>
+    </div>
+</DialogContainer>
+
+@code
+{
+    /// <summary>
+    /// Message title 
+    /// </summary>
+    public string? Title { get; set; } = "Error";
+
+    /// <summary>
+    /// Message contentType
+    /// </summary>
+    public string? Messasge { get; set; }
+}

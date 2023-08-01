@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using System.Diagnostics.Contracts;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Authentication;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -43,8 +44,6 @@ namespace MyLab.BlazorAdmin
                 {
                     var httpClient = sp.GetRequiredService<IHttpClientFactory>()
                         .CreateClient("backend");
-                    //var testOpts = sp.GetRequiredService<IOptions<TestOptions>>();
-                    //httpClient.BaseAddress = new Uri(GetBaseAddr(testOpts));
 
                     return httpClient;
                 })
@@ -92,18 +91,35 @@ namespace MyLab.BlazorAdmin
                     });
             }
 
-            TestIdentity GetTestIdentity(IServiceProvider sp)
-            {
-                var testOpts = sp.GetRequiredService<IOptions<TestOptions>>().Value;
-
-                if (!testOpts.Identities.TryGetValue(testOpts.UseIdentity, out var foundTestIdentity))
-                    throw new InvalidOperationException($"Test identity '{testOpts.UseIdentity}' not found");
-
-                return foundTestIdentity;
-            }
-
             string GetBaseAddr(IOptions<TestOptions>? testOpts) => testOpts?.Value.BaseApiUrl ?? hBuilder.HostEnvironment.BaseAddress;
             
+        }
+
+        /// <summary>
+        /// Adds admin services without authentication
+        /// </summary>
+        internal static void AddAdminServicesDemo(this WebAssemblyHostBuilder hBuilder)
+        {
+            hBuilder.Services
+                .Configure<TestOptions>(hBuilder.Configuration.GetSection(TestOptions.SectionName))
+                .AddScoped<IUserInfoProvider, DefaultUserInfoProvider>()
+                .AddSingleton<IPageNavigator, PageNavigator>()
+                .AddScoped<AuthenticationStateProvider>(sp =>
+                {
+                    var foundIdentity = GetTestIdentity(sp);
+                    var navigationManager = sp.GetRequiredService<NavigationManager>();
+                    return new TestAuthStateProvider(foundIdentity, navigationManager);
+                });
+        }
+
+        static TestIdentity GetTestIdentity(IServiceProvider sp)
+        {
+            var testOpts = sp.GetRequiredService<IOptions<TestOptions>>().Value;
+
+            if (!testOpts.Identities.TryGetValue(testOpts.UseIdentity, out var foundTestIdentity))
+                throw new InvalidOperationException($"Test identity '{testOpts.UseIdentity}' not found");
+
+            return foundTestIdentity;
         }
     }
 }
