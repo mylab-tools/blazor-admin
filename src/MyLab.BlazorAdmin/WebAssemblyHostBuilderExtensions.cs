@@ -10,6 +10,7 @@ using MyLab.BlazorAdmin.Services;
 using MyLab.BlazorAdmin.Test;
 using System.Net.Http;
 using Microsoft.AspNetCore.Components;
+using MyLab.BlazorAdmin.Services.Dialogs;
 
 namespace MyLab.BlazorAdmin
 {
@@ -39,6 +40,9 @@ namespace MyLab.BlazorAdmin
             hBuilder.Services
                 .Configure<TestOptions>(hBuilder.Configuration.GetSection(TestOptions.SectionName))
                 .AddScoped<IUserInfoProvider, DefaultUserInfoProvider>()
+                .AddScoped<DialogService>()
+                .AddScoped<IDialogService>(sp => sp.GetRequiredService<DialogService>())
+                .AddScoped<IDialogPlaceRegistrar>(sp => sp.GetRequiredService<DialogService>())
                 .AddSingleton<IPageNavigator, PageNavigator>()
                 .AddScoped(sp =>
                 {
@@ -104,6 +108,9 @@ namespace MyLab.BlazorAdmin
                 .Configure<TestOptions>(hBuilder.Configuration.GetSection(TestOptions.SectionName))
                 .AddScoped<IUserInfoProvider, DefaultUserInfoProvider>()
                 .AddSingleton<IPageNavigator, PageNavigator>()
+                .AddScoped<DialogService>()
+                .AddScoped<IDialogService>(sp => sp.GetRequiredService<DialogService>())
+                .AddScoped<IDialogPlaceRegistrar>(sp => sp.GetRequiredService<DialogService>())
                 .AddScoped<AuthenticationStateProvider>(sp =>
                 {
                     var foundIdentity = GetTestIdentity(sp);

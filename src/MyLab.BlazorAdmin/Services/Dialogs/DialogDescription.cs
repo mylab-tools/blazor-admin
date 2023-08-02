@@ -34,9 +34,25 @@ public class DialogDescription
     /// </summary>
     public InitParametersDictionary? FooterParameters { get; init; }
     /// <summary>
-    /// Contains dialog button descriptions
+    /// Contains custom dialog button descriptions
     /// </summary>
-    public ImmutableArray<DialogButtonDescription> Buttons { get; init; }
+    public ImmutableArray<DialogButtonDescription> CustomButtons { get; init; }
+    /// <summary>
+    /// Describes OK or Yes button
+    /// </summary>
+    public DialogButtonDescription? OkYesButton { get; init; }
+    /// <summary>
+    /// Describes Not button
+    /// </summary>
+    public DialogButtonDescription? NoButton { get; init; }
+    /// <summary>
+    /// Describes Cancel button
+    /// </summary>
+    public DialogButtonDescription? CancelButton { get; init; }
+    /// <summary>
+    /// Calls when dialog just closed
+    /// </summary>
+    public DialogCallback? DialogCallback { get; init; }
     /// <summary>
     /// Initializes a new instance of <see cref="DialogDescription"/>
     /// </summary>

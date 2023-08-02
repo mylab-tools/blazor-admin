@@ -8,5 +8,5 @@ public interface IDialogPlace
     /// <summary>
     /// Creates and initialize new dialog
     /// </summary>
-    IDialog CreateDialog(DialogDescription description);
+    Task<IDialog> CreateDialogAsync(DialogDescription description);
 }

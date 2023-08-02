@@ -9,9 +9,13 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
 {
     readonly string _title;
 
-    private readonly IDialogPlace _dialogPlace;
+    private readonly IDialogPlace? _dialogPlace;
 
-    private List<DialogButtonDescription> _buttons = new();
+    private List<DialogButtonDescription> _customButtons = new();
+
+    private DialogButtonDescription? _okYesBtn;
+    private DialogButtonDescription? _noBtn;
+    private DialogButtonDescription? _cancelBtn;
 
     private Type _contentType;
 
@@ -22,48 +26,75 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
     private InitParametersDictionary? _contentParameters;
 
     private InitParametersDictionary? _footerParameters;
+
+    private DialogCallback? _dialogCallback;
         
-    public DialogBuilder(string title, IDialogPlace dialogPlace)
+    public DialogBuilder(string title, IDialogPlace? dialogPlace)
     {
         _title = title ?? throw new ArgumentNullException(nameof(title));
         _dialogPlace = dialogPlace;
         _contentType = typeof(TContent);
     }
 
-    public IDialogBuilder<TContent> WithOkYesButton(Action callback, string title = "OK")
+    public IDialogBuilder<TContent> WithDialogCallback(DialogCallback callback)
+    {
+        var clone = Clone();
+
+        clone._dialogCallback = callback;
+
+        return clone;
+    }
+
+    public IDialogBuilder<TContent> WithOkYesButton(DialogCallback callback, object? state = null)
     {
         var clone = Clone();
             
-        clone._buttons.Add(new DialogButtonDescription(title){ Callback = callback, Primary = true});
+        clone._okYesBtn = new DialogButtonDescription
+        {
+            Callback = callback, 
+            Primary = true,
+            State = state,
+            Result = DialogResult.OkYes
+        };
 
         return clone;
     }
 
-    public IDialogBuilder<TContent> WithNoButton(Action callback, string title = "No")
+    public IDialogBuilder<TContent> WithNoButton(DialogCallback? callback = null, object? state = null)
     {
         var clone = Clone();
 
-        clone._buttons.Add(new DialogButtonDescription(title) { Callback = callback });
+        clone._noBtn = new DialogButtonDescription
+        {
+            Callback = callback,
+            State = state,
+            Result = DialogResult.No
+        };
 
         return clone;
     }
 
-    public IDialogBuilder<TContent> WithCancelButton(string title = "Cancel")
+    public IDialogBuilder<TContent> WithCancelButton(DialogCallback? callback = null, object? state = null)
     {
         var clone = Clone();
 
-        clone._buttons.Add(new DialogButtonDescription(title));
+        clone._cancelBtn = new DialogButtonDescription
+        {
+            Callback = callback,
+            State = state,
+            Result = DialogResult.Undefined
+        };
 
         return clone;
     }
 
-    public IDialogBuilder<TContent> WithButton(DialogButtonDescription description)
+    public IDialogBuilder<TContent> AddButton(DialogButtonDescription description)
     {
         if (description == null) throw new ArgumentNullException(nameof(description));
 
         var clone = Clone();
 
-        clone._buttons.Add(description);
+        clone._customButtons.Add(description);
 
         return clone;
     }
@@ -102,9 +133,10 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
         return clone;
     }
 
-    public IDialog Create()
+    public async Task<IDialog> CreateAsync()
     {
-        return _dialogPlace.CreateDialog(ToDescription());
+        if (_dialogPlace == null) return new EmptyDialog();
+        return await _dialogPlace.CreateDialogAsync(ToDescription());
     }
 
     DialogDescription ToDescription()
@@ -114,9 +146,13 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
             Title = _title,
             Backdrop = _backdrop ?? DialogBackdrop.False,
             FooterType = _footerType,
-            Buttons = _buttons.ToImmutableArray(),
+            CustomButtons = _customButtons.ToImmutableArray(),
             ContentParameters = _contentParameters,
-            FooterParameters = _footerParameters
+            FooterParameters = _footerParameters,
+            DialogCallback = _dialogCallback,
+            CancelButton = _cancelBtn,
+            NoButton = _noBtn,
+            OkYesButton = _okYesBtn
         };
     }
 
@@ -127,9 +163,13 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
             _backdrop = _backdrop,
             _contentParameters = _contentParameters,
             _footerParameters = _footerParameters,
-            _buttons = _buttons,
+            _customButtons = _customButtons,
             _contentType = _contentType,
-            _footerType = _footerType
+            _footerType = _footerType,
+            _dialogCallback = _dialogCallback,
+            _cancelBtn = _cancelBtn,
+            _noBtn = _noBtn,
+            _okYesBtn = _okYesBtn
         };
     }
 }

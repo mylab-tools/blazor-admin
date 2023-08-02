@@ -9,21 +9,25 @@ namespace MyLab.BlazorAdmin.Services.Dialogs;
 public interface IDialogBuilder<TContent>
 {
     /// <summary>
-    /// Adds OkYes button
+    /// Sets callback for all results
     /// </summary>
-    public IDialogBuilder<TContent> WithOkYesButton(Action callback, string title = "OK");
+    IDialogBuilder<TContent> WithDialogCallback(DialogCallback callback);
     /// <summary>
-    /// Adds No button
+    /// Sets OkYes button
     /// </summary>
-    public IDialogBuilder<TContent> WithNoButton(Action callback, string title = "No");
+    public IDialogBuilder<TContent> WithOkYesButton(DialogCallback callback, object? state = null);
     /// <summary>
-    /// Adds cancel button
+    /// Sets No button
     /// </summary>
-    public IDialogBuilder<TContent> WithCancelButton(string title = "Cancel");
+    public IDialogBuilder<TContent> WithNoButton(DialogCallback? callback = null, object? state = null);
+    /// <summary>
+    /// Sets cancel button
+    /// </summary>
+    public IDialogBuilder<TContent> WithCancelButton(DialogCallback? callback = null, object? state = null);
     /// <summary>
     /// Adds custom button
     /// </summary>
-    public IDialogBuilder<TContent> WithButton(DialogButtonDescription description);
+    public IDialogBuilder<TContent> AddButton(DialogButtonDescription description);
     /// <summary>
     /// Specifies a footer component
     /// </summary>
@@ -40,7 +44,23 @@ public interface IDialogBuilder<TContent>
     /// </summary>
     public IDialogBuilder<TContent> WithBackdrop(DialogBackdrop backdrop);
     /// <summary>
-    /// Opens a dialog
+    /// Creates a dialog
     /// </summary>
-    public IDialog Create();
+    public Task<IDialog> CreateAsync();
+}
+
+/// <summary>
+/// Extensions for <see cref="IDialogBuilder{TContent}"/>
+/// </summary>
+public static class DialogBuilderExtensions
+{
+    /// <summary>
+    /// Creates and opens a dialog
+    /// </summary>
+    public static async Task<IDialog> OpenAsync<TContent>(this IDialogBuilder<TContent> builder)
+    {
+        var dialog = await builder.CreateAsync();
+        await dialog.OpenAsync();
+        return dialog;
+    }
 }

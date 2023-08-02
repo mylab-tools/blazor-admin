@@ -9,21 +9,26 @@
         /// <summary>
         /// Title on the button
         /// </summary>
-        public string Title { get; }
+        public string? Title { get; set; }
         /// <summary>
         /// Gets callback action which invokes when button pressed
         /// </summary>
-        public Action? Callback { get; init; }
+        /// <remarks>Returns consent for dialog closing</remarks>
+        public DialogCallback? Callback { get; init; }
         /// <summary>
         /// Gets or set primary button
         /// </summary>
         public bool Primary { get; set; }
+
         /// <summary>
-        /// Initializes a new instance of <see cref="DialogButtonDescription"/>
+        /// Specifies dialog result when it button will be clicked
         /// </summary>
-        public DialogButtonDescription(string title)
-        {
-            Title = title;
-        }
+        /// <remarks><see cref="DialogResult.Undefined"/> by default</remarks>
+        public DialogResult Result { get; set; } = DialogResult.Undefined;
+
+        /// <summary>
+        /// An object which will be passed into callback
+        /// </summary>
+        public object? State { get; set; }
     }
 }

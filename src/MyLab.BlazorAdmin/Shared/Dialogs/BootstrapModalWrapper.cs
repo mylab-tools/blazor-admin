@@ -1,14 +1,13 @@
-﻿using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
+﻿using Microsoft.JSInterop;
 using MyLab.BlazorAdmin.Services.Dialogs;
 using MyLab.BlazorAdmin.Tools;
+using Nito.AsyncEx;
 
 namespace MyLab.BlazorAdmin.Shared.Dialogs;
 
 class BootstrapModalWrapper : IDialog
 {
     private readonly IJSRuntime _js;
-    private readonly string _elementId;
     private readonly DotNetObjectReference<BootstrapModalWrapper> _ref;
 
     public event AsyncEventHandler? Opening;
@@ -16,6 +15,8 @@ class BootstrapModalWrapper : IDialog
     public event AsyncEventHandler? Closing;
     public event AsyncEventHandler? Closed;
     public event AsyncEventHandler? ClosePrevented;
+
+    public string ElementId { get; }
 
     [JSInvokable]
     public async Task OnShowModal()
@@ -58,7 +59,7 @@ class BootstrapModalWrapper : IDialog
     public BootstrapModalWrapper(IJSRuntime js, string elementId)
     {
         _js = js ?? throw new ArgumentNullException(nameof(js));
-        _elementId = elementId ?? throw new ArgumentNullException(nameof(elementId));
+        ElementId = elementId ?? throw new ArgumentNullException(nameof(elementId));
 
         _ref = DotNetObjectReference.Create(this); 
     }
@@ -82,21 +83,23 @@ class BootstrapModalWrapper : IDialog
                 throw new ArgumentOutOfRangeException(nameof(backdrop), backdrop, null);
         }
 
-        return _js.InvokeVoidAsync("window.mylabAdmin.modal.initialize", _elementId, backdropObj, _ref);
+        return _js.InvokeVoidAsync("window.mylabAdmin.modal.initialize", ElementId, backdropObj, _ref);
     }
 
     public ValueTask OpenAsync()
     {
-        return _js.InvokeVoidAsync("window.mylabAdmin.modal.show", _elementId);
+        return _js.InvokeVoidAsync("window.mylabAdmin.modal.show", ElementId);
     }
+
+    public DialogResult Result { get; set; }
 
     public ValueTask CloseAsync()
     {
-        return _js.InvokeVoidAsync("window.mylabAdmin.modal.hide", _elementId);
+        return _js.InvokeVoidAsync("window.mylabAdmin.modal.hide", ElementId);
     }
 
     public ValueTask DisposeAsync()
     {
-        return _js.InvokeVoidAsync("window.mylabAdmin.modal.dispose", _elementId);
+        return _js.InvokeVoidAsync("window.mylabAdmin.modal.dispose", ElementId);
     }
 }
