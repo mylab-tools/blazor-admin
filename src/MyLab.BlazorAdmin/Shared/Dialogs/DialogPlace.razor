@@ -1,0 +1,100 @@
+﻿@using MyLab.BlazorAdmin.Services.Dialogs
+@using Microsoft.JSInterop
+@using Nito.AsyncEx
+@implements MyLab.BlazorAdmin.Services.Dialogs.IDialogPlace
+
+@inject IJSRuntime Js
+@inject IDialogPlaceRegistrar DialogPlaceRegistrar
+
+@foreach (var d in _dialogs)
+{
+    <DialogContainer DialogStuff="d"/>
+}
+
+@code {
+
+    readonly AsyncManualResetEvent _rendered = new(false);
+
+    readonly List<DialogStuff> _dialogs = new();
+
+    /// <inheritdoc />
+    public async Task<IDialog> CreateDialogAsync(DialogDescription description)
+    {
+        RenderFragment contentRf = CreateRenderFragment(description.ContentType, description.ContentParameters);
+
+        RenderFragment? footerRf = description.FooterType != null
+            ? CreateRenderFragment(description.FooterType, description.FooterParameters)
+            : null;
+
+        var dialogId = "mylab-modal-" + Guid.NewGuid().ToString("N");
+        var dialogWrapper = new BootstrapModalWrapper(Js, dialogId);
+        dialogWrapper.Closed += DialogClosedAsync;
+
+        _dialogs.Add(new DialogStuff(dialogId, dialogWrapper, description, contentRf)
+        {
+            Footer = footerRf
+        });
+
+        _rendered.Reset();
+
+        StateHasChanged();
+
+        await _rendered.WaitAsync();
+        await dialogWrapper.InitializeAsync(description.Backdrop);
+
+        return dialogWrapper;
+    }
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        DialogPlaceRegistrar.Register(this);
+
+        base.OnInitialized();
+    }
+
+    /// <inheritdoc />
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+
+        _rendered.Set();
+    }
+
+    async Task DialogClosedAsync(object sender, EventArgs e)
+    {
+        var dialogSender = (BootstrapModalWrapper)sender;
+        dialogSender.Closed -= DialogClosedAsync;
+
+        var foundDialog = _dialogs.FirstOrDefault(d => d.Id == dialogSender.ElementId);
+
+        if (foundDialog != null)
+        {
+            await foundDialog.Dialog.DisposeAsync();
+            _dialogs.Remove(foundDialog);
+            StateHasChanged();
+        }
+    }
+
+    RenderFragment CreateRenderFragment(Type componentType, IDictionary<string, object>? parameters)
+    {
+        return b =>
+        {
+            b.OpenComponent(0, componentType);
+
+            if (parameters != null)
+            {
+                foreach (var parameter in parameters)
+                {
+                    b.AddAttribute(1, parameter.Key, parameter.Value);
+                }
+            }
+
+            b.AddComponentReferenceCapture(2, component => {/*dialogRef = component*/});
+
+            b.CloseComponent();
+        };
+    }
+}
+
+

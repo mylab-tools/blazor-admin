@@ -29,7 +29,7 @@ builder.Services.Configure<PageNavigationOptions>(opts =>
                 Title = "Components",
                 Nodes = new PageNavigationNodeDefinition[]
                 {
-                    new() { Title = "Dilaogs", FaClass = "comment-alt", UrlItem = "dialogs"},
+                    new() { Title = "Dialogs", FaClass = "comment-alt", UrlItem = "dialogs"},
                 }
             }
         };

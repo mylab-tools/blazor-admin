@@ -1,0 +1,100 @@
+﻿@using MyLab.BlazorAdmin.Services.Dialogs
+<div class="modal" tabindex="-1" id="@DialogStuff?.Id">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">@DialogStuff?.Description.Title</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @DialogStuff?.Content
+            </div>
+            <div class="modal-footer">
+                @if (DialogStuff?.Footer != null)
+                {
+                    @DialogStuff.Footer
+                }
+                @if (DialogStuff?.Description.OkYesButton is {} okYesBtn)
+                {
+                    var defaultTitle = DialogStuff?.Description.NoButton != null ? "Yes" : "OK";
+                    <button type="button" class="btn btn-primary" @onclick="() => CallbackButtonAsync(okYesBtn)">@(okYesBtn.Title ?? defaultTitle)</button>
+                }
+                
+                @if (DialogStuff?.Description.NoButton is {} noBtn)
+                {
+                    <button type="button" class="btn btn-secondary" @onclick="() => CallbackButtonAsync(noBtn)">@(noBtn.Title ?? "No")</button>
+                }
+                
+                @if (DialogStuff?.Description.CancelButton is {} cancelBtn)
+                {
+                    <button type="button" class="btn btn-secondary" @onclick="() => CallbackButtonAsync(cancelBtn)">@(cancelBtn.Title ?? "Cancel")</button>
+                }
+
+            @*@if (DialogStuff?.Description.CustomButtons.IsEmpty == false)
+            {
+                foreach (var button in DialogStuff.Description.CustomButtons)
+                {
+                    var cssClass = button.Primary ? "btn-primary" : "btn-secondary";
+                    <button type="button" class="btn @cssClass" @onclick="() => CallbackButtonAsync(button)">@button.Title</button>
+                }
+            }*@
+            </div>
+        </div>
+    </div>
+</div>
+
+@code
+{
+    /// <summary>
+    /// Dialog description
+    /// </summary>
+    [Parameter, EditorRequired]
+    public DialogStuff? DialogStuff{ get; set; }
+
+    /// <inheritdoc />
+    protected override Task OnInitializedAsync()
+    {
+        if (DialogStuff != null)
+        {
+            DialogStuff.Dialog.Closed += DialogClosedAsync;
+        }
+        return base.OnInitializedAsync();
+    }
+
+    private async Task DialogClosedAsync(object sender, EventArgs e)
+    {
+        if (DialogStuff?.Dialog is {} dialog)
+        {
+            dialog.Closed -= DialogClosedAsync;
+
+            if (DialogStuff.Description.CancelButton is {} cBtn)
+            {
+                await CallbackButtonAsync(cBtn);
+            }
+            else if (DialogStuff.Description.NoButton is { } nBtn)
+            {
+                await CallbackButtonAsync(nBtn);
+            }
+        }
+    }
+
+
+    private async Task CallbackButtonAsync(DialogButtonDescription button)
+    {
+        if(DialogStuff == null) return;
+        
+        DialogStuff.Dialog.Result = button.Result;
+
+        var buttonConsent = button.Callback == null || 
+                            await button.Callback.Invoke(button.Result, button.State);
+
+        var dialogCallbackConsent = DialogStuff.Description.DialogCallback == null || 
+                                    await DialogStuff.Description.DialogCallback.Invoke(button.Result, button.State);
+        
+        if (buttonConsent && dialogCallbackConsent)
+        {
+            DialogStuff.Dialog.Closed -= DialogClosedAsync;
+            await DialogStuff.Dialog.CloseAsync();
+        }
+    }
+}
