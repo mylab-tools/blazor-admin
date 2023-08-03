@@ -8,9 +8,10 @@
             <small>@subtitle</small>
         }
     }
-    <div class="d-flex flex-row pt-4">
-        @if (_metrics != null)
-        {
+    @if (_metrics != null)
+    {
+        <div class="d-flex flex-row pt-4">
+
             @foreach (var m in _metrics)
             {
                 <div class="d-flex flex-column ms-4 me-4 align-items-center" title="@m.Title">
@@ -24,6 +25,6 @@
                     }
                 </div>
             }
-        }
-    </div>
+        </div>
+    }
 </div>

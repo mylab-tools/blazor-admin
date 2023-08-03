@@ -1,0 +1,11 @@
+﻿@if (_expanded)
+{
+    <div class="alert alert-secondary alert-dismissible fade show">
+        @ChildContent
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="CollapseRequestedAsync"></button>
+    </div>
+}
+else
+{
+    <a href="javascript: void(0)" class="align-self-end mb-2" @onclick="ExpandRequestedAsync">@CollapsedStateTitle</a>
+}

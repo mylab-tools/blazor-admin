@@ -1,0 +1,70 @@
+﻿@page "/dialogs"
+
+@using MyLab.BlazorAdmin.Services.Dialogs
+@inherits AdminNestedPage
+@inject IDialogService DialogService
+
+<div class="mb-3 d-flex flex-column align-items-start">
+    <h5>One way:</h5>
+    <div>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickErrorAsync">
+            Show an Error
+        </button>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickExclamationAsync">
+            Show an Exclamation
+        </button>
+    </div>
+</div>
+
+<div class="mb-3 d-flex flex-column align-items-start">
+    <h5>Questions:</h5>
+    <span>Result: @(QResult ?? "[none]")</span>
+    <div>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickYnqAsync">
+            Show Yes-No question
+        </button>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickYncqAsync">
+            Show Yes-No-Cancel question
+        </button>
+    </div>
+</div>
+
+@code {
+
+    string? QResult
+    {
+        get => _qResult;
+        set
+        {
+            _qResult = value;
+            StateHasChanged();
+        }
+    }
+
+    private async Task OnClickErrorAsync()
+    {
+        await DialogService.ShowErrorAsync("Alarm!");
+    }
+
+    private async Task OnClickExclamationAsync()
+    {
+        await DialogService.ShowExclamationAsync("Exclamation!");
+    }
+
+    private async Task OnClickYnqAsync()
+    {
+        await DialogService.ShowYnQuestionAsync("Yes or No?",
+            () => QResult = "Yes",
+            () => QResult = "No");
+    }
+
+    private async Task OnClickYncqAsync()
+    {
+        await DialogService.ShowYncQuestionAsync("Yes or No?",
+            () => QResult = "Yes",
+            () => QResult = "No",
+            () => QResult = "Cancel");
+    }
+
+    private string? _qResult;
+}
