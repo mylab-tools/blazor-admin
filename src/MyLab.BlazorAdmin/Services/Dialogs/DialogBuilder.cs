@@ -5,7 +5,7 @@ using MyLab.BlazorAdmin.Tools;
 
 namespace MyLab.BlazorAdmin.Services.Dialogs;
 
-class DialogBuilder<TContent> : IDialogBuilder<TContent>
+class DialogBuilder<TDialog> : IDialogBuilder<TDialog>
 {
     readonly string _title;
 
@@ -27,68 +27,94 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
 
     private InitParametersDictionary? _footerParameters;
 
-    private DialogCallback? _dialogCallback;
+    private AsyncDialogCallback? _dialogCallback;
         
     public DialogBuilder(string title, IDialogPlace? dialogPlace)
     {
         _title = title ?? throw new ArgumentNullException(nameof(title));
         _dialogPlace = dialogPlace;
-        _contentType = typeof(TContent);
+        _contentType = typeof(TDialog);
     }
 
-    public IDialogBuilder<TContent> WithDialogCallback(DialogCallback callback)
+    public IDialogBuilder<TDialog> WithDialogCallback(AsyncDialogCallback<TDialog> callback)
     {
+        if (callback == null) throw new ArgumentNullException(nameof(callback));
         var clone = Clone();
 
-        clone._dialogCallback = callback;
+        clone._dialogCallback = (sender, result, state) => callback((TDialog)sender, result, state);
 
         return clone;
     }
 
-    public IDialogBuilder<TContent> WithOkYesButton(DialogCallback callback, object? state = null)
+    public IDialogButtonBuilder<TDialog> BuildOkYesButton()
     {
-        var clone = Clone();
-            
-        clone._okYesBtn = new DialogButtonDescription
-        {
-            Callback = callback, 
-            Primary = true,
-            State = state,
-            Result = DialogResult.OkYes
-        };
+        return new DialogButtonBuilder<TDialog>(
+            new DialogButtonDescription
+            {
+                Primary = true,
+                Result = DialogResult.OkYes
+            },
+            newDesc =>
+            {
+                var clone = Clone();
 
-        return clone;
+                clone._okYesBtn = newDesc;
+
+                return clone;
+            });
     }
 
-    public IDialogBuilder<TContent> WithNoButton(DialogCallback? callback = null, object? state = null)
+    public IDialogButtonBuilder<TDialog> BuildNoButton()
     {
-        var clone = Clone();
+        return new DialogButtonBuilder<TDialog>(
+            new DialogButtonDescription
+            {
+                Result = DialogResult.No
+            },
+            newDesc =>
+            {
+                var clone = Clone();
 
-        clone._noBtn = new DialogButtonDescription
-        {
-            Callback = callback,
-            State = state,
-            Result = DialogResult.No
-        };
+                clone._noBtn = newDesc;
 
-        return clone;
+                return clone;
+            });
     }
 
-    public IDialogBuilder<TContent> WithCancelButton(DialogCallback? callback = null, object? state = null)
+    public IDialogButtonBuilder<TDialog> BuildCancelButton()
     {
-        var clone = Clone();
+        return new DialogButtonBuilder<TDialog>(
+            new DialogButtonDescription(),
+            newDesc =>
+            {
+                var clone = Clone();
 
-        clone._cancelBtn = new DialogButtonDescription
-        {
-            Callback = callback,
-            State = state,
-            Result = DialogResult.Undefined
-        };
+                clone._cancelBtn = newDesc;
 
-        return clone;
+                return clone;
+            });
+    }
+    
+    public IDialogButtonBuilder<TDialog> BuildButton(string? title = null, bool primary = false, DialogResult dialogResult = DialogResult.Undefined)
+    {
+        return new DialogButtonBuilder<TDialog>(
+            new DialogButtonDescription
+            {
+                Title = title,
+                Primary = primary,
+                Result = dialogResult
+            },
+            newDesc =>
+            {
+                var clone = Clone();
+
+                clone._customButtons.Add(newDesc);
+
+                return clone;
+            });
     }
 
-    public IDialogBuilder<TContent> AddButton(DialogButtonDescription description)
+    public IDialogBuilder<TDialog> AddButton(DialogButtonDescription description)
     {
         if (description == null) throw new ArgumentNullException(nameof(description));
 
@@ -99,7 +125,7 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
         return clone;
     }
 
-    public IDialogBuilder<TContent> WithFooter<TFooter>(Expression<Func<TFooter>>? setParams = null)
+    public IDialogBuilder<TDialog> WithFooter<TFooter>(Expression<Func<TFooter>>? setParams = null)
     {
         var clone = Clone();
 
@@ -113,7 +139,7 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
         return clone;
     }
 
-    public IDialogBuilder<TContent> WithParameters(Expression<Func<TContent>> setParams)
+    public IDialogBuilder<TDialog> WithParameters(Expression<Func<TDialog>> setParams)
     {
         if (setParams == null) throw new ArgumentNullException(nameof(setParams));
 
@@ -124,7 +150,7 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
         return clone;
     }
 
-    public IDialogBuilder<TContent> WithBackdrop(DialogBackdrop backdrop)
+    public IDialogBuilder<TDialog> WithBackdrop(DialogBackdrop backdrop)
     {
         var clone = Clone();
 
@@ -133,10 +159,10 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
         return clone;
     }
 
-    public async Task<IDialog> CreateAsync()
+    public async Task<IDialog<TDialog>> CreateAsync()
     {
-        if (_dialogPlace == null) return new EmptyDialog();
-        return await _dialogPlace.CreateDialogAsync(ToDescription());
+        if (_dialogPlace == null) return new EmptyDialog<TDialog>();
+        return await _dialogPlace.CreateDialogAsync<TDialog>(ToDescription());
     }
 
     DialogDescription ToDescription()
@@ -156,9 +182,9 @@ class DialogBuilder<TContent> : IDialogBuilder<TContent>
         };
     }
 
-    DialogBuilder<TContent> Clone()
+    DialogBuilder<TDialog> Clone()
     {
-        return new DialogBuilder<TContent>(_title, _dialogPlace)
+        return new DialogBuilder<TDialog>(_title, _dialogPlace)
         {
             _backdrop = _backdrop,
             _contentParameters = _contentParameters,

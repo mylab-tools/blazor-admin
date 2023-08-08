@@ -42,16 +42,13 @@ public interface IDialog : IAsyncDisposable
     DialogResult Result { get; set; }
 }
 
-class EmptyDialog : IDialog
+/// <summary>
+/// Represent a dialog
+/// </summary>
+public interface IDialog<out TModel> : IDialog
 {
-    public event AsyncEventHandler? Opening;
-    public event AsyncEventHandler? Opened;
-    public event AsyncEventHandler? Closing;
-    public event AsyncEventHandler? Closed;
-    public event AsyncEventHandler? ClosePrevented;
-    
-    public ValueTask CloseAsync() => ValueTask.CompletedTask;
-    public ValueTask OpenAsync() => ValueTask.CompletedTask;
-    public DialogResult Result { get; set; }
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+    /// <summary>
+    /// Gets a dialog model
+    /// </summary>
+    TModel Model { get; }
 }

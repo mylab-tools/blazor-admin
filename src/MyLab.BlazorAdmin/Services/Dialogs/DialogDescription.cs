@@ -52,7 +52,7 @@ public class DialogDescription
     /// <summary>
     /// Calls when dialog just closed
     /// </summary>
-    public DialogCallback? DialogCallback { get; init; }
+    public AsyncDialogCallback? DialogCallback { get; init; }
     /// <summary>
     /// Initializes a new instance of <see cref="DialogDescription"/>
     /// </summary>

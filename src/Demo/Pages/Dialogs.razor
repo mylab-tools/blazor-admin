@@ -1,6 +1,7 @@
 ﻿@page "/dialogs"
 
 @using MyLab.BlazorAdmin.Services.Dialogs
+@using Demo.Shared.Dialogs
 @inherits AdminNestedPage
 @inject IDialogService DialogService
 
@@ -29,7 +30,30 @@
     </div>
 </div>
 
+<div class="mb-3 d-flex flex-column align-items-start">
+    <h5>Input dialog:</h5>
+    <span>Result: @(InputDialogResult ?? "[none]")</span>
+    <div>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickInputDialog">
+            Show input dialog
+        </button>
+    </div>
+</div>
+
 @code {
+
+    private string? _qResult;
+    private string? _inputDialogResult;
+
+    string? InputDialogResult
+    {
+        get => _inputDialogResult;
+        set
+        {
+            _inputDialogResult = value;
+            StateHasChanged();
+        }
+    }
 
     string? QResult
     {
@@ -66,5 +90,16 @@
             () => QResult = "Cancel");
     }
 
-    private string? _qResult;
+    private async Task OnClickInputDialog()
+    {
+        await DialogService.Create<InputEmailNotificationDialog>("Email notification")
+            .WithParameters(() => new InputEmailNotificationDialog
+            {
+                Email = "example@host.com",
+                SendMeNotifications = true
+            })
+            .BuildOkYesButton().OneWayCallback((dialog, _, _) => InputDialogResult = dialog.Email + " - " + (dialog.SendMeNotifications ? "allow": "deny")).End()
+            .WithCancelButton()
+            .OpenAsync();
+    }
 }

@@ -13,7 +13,7 @@ public static class DialogServiceExtensions
     public static async Task ShowErrorAsync(this IDialogService dialogService, string message)
     {
         await dialogService.Create<ErrorMessage>("Error")
-            .WithOkYesButton((_, _) => Task.FromResult(true))
+            .BuildOkYesButton().End()
             .WithParameters(() => new () { Messasge = message })
             .OpenAsync();
     }
@@ -24,7 +24,7 @@ public static class DialogServiceExtensions
     public static async Task ShowExclamationAsync(this IDialogService dialogService, string message)
     {
         await dialogService.Create<ExclamationMessage>("Exclamation")
-            .WithOkYesButton((_, _) => Task.FromResult(true))
+            .BuildOkYesButton().End()
             .WithParameters(() => new () { Messasge = message })
             .OpenAsync();
     }
@@ -38,64 +38,25 @@ public static class DialogServiceExtensions
         Action acceptHandler,
         Action? rejectHandler = null)
     {
-        var aFunc = () =>
-        {
-            acceptHandler();
-            return Task.CompletedTask;
-        };
-
-        Func<Task>? rFunc = null;
-
-        if (rejectHandler != null)
-        {
-            rFunc = () =>
-            {
-                rejectHandler();
-                return Task.CompletedTask;
-            };
-        }
-
-        return ShowYnQuestionAsync(dialogService, message, aFunc, rFunc);
+        return dialogService.Create<QuestionMessage>("Question")
+            .BuildOkYesButton().OneWayCallback((_, _, _) => acceptHandler()).End()
+            .BuildNoButton().OneWayCallback((_, _, _) => rejectHandler?.Invoke()).End()
+            .WithParameters(() => new() { Messasge = message })
+            .OpenAsync();
     }
 
     /// <summary>
     /// Shows Yes-No question
     /// </summary>
-    public static async Task ShowYnQuestionAsync(
+    public static Task ShowYnQuestionAsync(
         this IDialogService dialogService, 
         string message,
         Func<Task> acceptHandler,
         Func<Task>? rejectHandler = null)
     {
-        await dialogService.Create<QuestionMessage>("Error")
-            .WithOkYesButton(async (_, _) =>
-            {
-                try
-                {
-                    await acceptHandler();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                return true;
-            })
-            .WithNoButton(async (_, _) =>
-            {
-                if (rejectHandler != null)
-                {
-                    try
-                    {
-                        await rejectHandler();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-
-                return true;
-            })
+        return dialogService.Create<QuestionMessage>("Question")
+            .BuildOkYesButton().OneWayAsyncCallback((_, _, _) => acceptHandler()).End()
+            .BuildNoButton().OneWayAsyncCallback((_, _, _) => rejectHandler?.Invoke() ?? Task.CompletedTask).End()
             .WithParameters(() => new () { Messasge = message })
             .OpenAsync();
     }
@@ -110,84 +71,29 @@ public static class DialogServiceExtensions
         Action rejectHandler,
         Action? cancelHandler = null)
     {
-        var aFunc = () =>
-        {
-            acceptHandler();
-            return Task.CompletedTask;
-        };
-
-        var rFunc = () =>
-        {
-            rejectHandler();
-            return Task.CompletedTask;
-        };
-
-        Func<Task>? cFunc = null;
-
-        if (cancelHandler != null)
-        {
-            cFunc = () =>
-            {
-                cancelHandler();
-                return Task.CompletedTask;
-            };
-        }
-
-        return ShowYncQuestionAsync(dialogService, message, aFunc, rFunc, cFunc);
+        return dialogService.Create<QuestionMessage>("Question")
+            .BuildOkYesButton().OneWayCallback((_, _, _) => acceptHandler()).End()
+            .BuildNoButton().OneWayCallback((_, _, _) => rejectHandler.Invoke()).End()
+            .BuildCancelButton().OneWayCallback((_, _, _) => cancelHandler?.Invoke()).End()
+            .WithParameters(() => new() { Messasge = message })
+            .OpenAsync();
     }
 
     /// <summary>
     /// Shows Yes-No-Cancel question
     /// </summary>
-    public static async Task ShowYncQuestionAsync(
+    public static Task ShowYncQuestionAsync(
         this IDialogService dialogService,
         string message,
         Func<Task> acceptHandler,
         Func<Task> rejectHandler,
         Func<Task>? cancelHandler = null)
     {
-        await dialogService.Create<QuestionMessage>("Error")
-            .WithOkYesButton( async (_, _) =>
-            {
-                try
-                {
-                    await acceptHandler();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                return true;
-            })
-            .WithNoButton(async (_, _) =>
-            {
-                try
-                {
-                    await rejectHandler();
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                }
-                return true;
-            })
-            .WithCancelButton(async (_, _) =>
-            {
-                if (cancelHandler != null)
-                {
-                    try
-                    {
-                        await cancelHandler();
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e);
-                    }
-                }
-
-                return true;
-            })
-            .WithParameters(() => new(){ Messasge = message })
+        return dialogService.Create<QuestionMessage>("Question")
+            .BuildOkYesButton().OneWayAsyncCallback((_, _, _) => acceptHandler()).End()
+            .BuildNoButton().OneWayAsyncCallback((_, _, _) => rejectHandler.Invoke()).End()
+            .BuildCancelButton().OneWayAsyncCallback((_, _, _) => cancelHandler?.Invoke() ?? Task.CompletedTask).End()
+            .WithParameters(() => new() { Messasge = message })
             .OpenAsync();
     }
 }
