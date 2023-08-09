@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Collections.ObjectModel;
+using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Components;
 using MyLab.ExpressionTools;
@@ -8,16 +9,8 @@ namespace MyLab.BlazorAdmin.Tools;
 /// <summary>
 /// Contains parameters for component initialization
 /// </summary>
-public class InitParametersDictionary : Dictionary<string, object>
+public class InitParametersDictionary : ReadOnlyDictionary<string, object>
 {
-    /// <summary>
-    /// Initializes a new instance of <see cref="InitParametersDictionary"/>
-    /// </summary>
-    public InitParametersDictionary()
-    {
-        
-    }
-
     /// <summary>
     /// Initializes a new instance of <see cref="InitParametersDictionary"/>
     /// </summary>

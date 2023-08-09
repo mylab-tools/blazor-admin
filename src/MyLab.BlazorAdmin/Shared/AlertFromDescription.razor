@@ -1,0 +1,42 @@
+﻿@using MyLab.BlazorAdmin.ComponentModel
+
+<div class="alert @GetCssClass() alert-dismissible fade show" role="alert">
+    @if (Description != null)
+    {
+        if (Description.Title != null)
+        {
+            <h4 class="alert-heading">@Description.Title</h4>
+        }
+        if (Description.Content != null)
+        {
+            @Description.Content?.CreateRenderFragment()
+        }
+    }
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" @onclick="() => Closer?.Invoke()"></button>
+</div>
+
+@code {
+    /// <summary>
+    /// Gets or sets alert description
+    /// </summary>
+    [Parameter, EditorRequired]
+    public AlertDescription? Description { get; set; }
+
+    [Parameter]
+    public Action? Closer { get; set; }
+
+    string GetCssClass()
+    {
+        switch (Description?.Type)
+        {
+            case AlertType.Success:
+                return "alert-success";
+            case AlertType.Warning:
+                return "alert-warning";
+            case AlertType.Danger:
+                return "alert-danger";
+            default:
+                return "alert-secondary";
+        }
+    }
+}
