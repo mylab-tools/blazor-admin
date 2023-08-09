@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using MyLab.BlazorAdmin.Shared.Dialogs;
 using MyLab.BlazorAdmin.Tools;
+using MyLab.BlazorAdmin.Tools.Rendering;
 
 namespace MyLab.BlazorAdmin.Services.Dialogs;
 
@@ -167,14 +168,12 @@ class DialogBuilder<TDialog> : IDialogBuilder<TDialog>
 
     DialogDescription ToDescription()
     {
-        return new DialogDescription(_contentType)
+        return new DialogDescription(new TemplateRenderFragmentFactory(_contentType, _contentParameters))
         {
             Title = _title,
             Backdrop = _backdrop ?? DialogBackdrop.False,
-            FooterType = _footerType,
             CustomButtons = _customButtons.ToImmutableArray(),
-            ContentParameters = _contentParameters,
-            FooterParameters = _footerParameters,
+            Footer = _footerType != null ? new TemplateRenderFragmentFactory(_footerType, _footerParameters) : null,
             DialogCallback = _dialogCallback,
             CancelButton = _cancelBtn,
             NoButton = _noBtn,

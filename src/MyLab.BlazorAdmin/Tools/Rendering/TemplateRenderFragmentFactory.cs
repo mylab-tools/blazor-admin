@@ -11,7 +11,7 @@ public class TemplateRenderFragmentFactory : RenderFragmentFactory
     /// <summary>
     /// Initializes a new instance of <see cref="TemplateRenderFragmentFactory"/>
     /// </summary>
-    TemplateRenderFragmentFactory(Type type, IReadOnlyDictionary<string, object>? parameters)
+    public TemplateRenderFragmentFactory(Type type, IReadOnlyDictionary<string, object>? parameters)
     {
         Type = type;
         Parameters = parameters;

@@ -20,9 +20,7 @@
     /// <inheritdoc />
     public async Task<IDialog<TDialog>> CreateDialogAsync<TDialog>(DialogDescription description)
     {
-        RenderFragment? footerRf = description.FooterType != null
-            ? CreateRenderFragment(description.FooterType, description.FooterParameters)
-            : null;
+        RenderFragment? footerRf = description.Footer?.CreateRenderFragment();
 
         var dialogId = "mylab-modal-" + Guid.NewGuid().ToString("N");
         var dialogWrapper = new BootstrapModalWrapper(Js, dialogId);
@@ -35,7 +33,7 @@
             Footer = footerRf
         };
         
-        RenderFragment contentRf = CreateRenderFragment(description.ContentType, description.ContentParameters, o =>
+        RenderFragment contentRf = description.Content.CreateRenderFragment(o =>
         {
             if (o != null)
             {
@@ -94,29 +92,6 @@
             _dialogs.Remove(foundDialog);
             StateHasChanged();
         }
-    }
-
-    RenderFragment CreateRenderFragment(Type componentType, IDictionary<string, object>? parameters, Action<object?>? modelCallback = null)
-    {
-        return b =>
-        {
-            b.OpenComponent(0, componentType);
-
-            if (parameters != null)
-            {
-                foreach (var parameter in parameters)
-                {
-                    b.AddAttribute(1, parameter.Key, parameter.Value);
-                }
-            }
-
-            b.AddComponentReferenceCapture(2, component =>
-            {
-                modelCallback?.Invoke(component);
-            });
-
-            b.CloseComponent();
-        };
     }
 }
 

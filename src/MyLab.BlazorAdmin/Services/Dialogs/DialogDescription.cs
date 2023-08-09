@@ -1,6 +1,7 @@
 ﻿using System.Collections.Immutable;
 using MyLab.BlazorAdmin.Shared.Dialogs;
 using MyLab.BlazorAdmin.Tools;
+using MyLab.BlazorAdmin.Tools.Rendering;
 
 namespace MyLab.BlazorAdmin.Services.Dialogs;
 
@@ -18,21 +19,13 @@ public class DialogDescription
     /// </summary>
     public DialogBackdrop Backdrop { get; init; } = DialogBackdrop.False;
     /// <summary>
-    /// Content component type
+    /// Content component 
     /// </summary>
-    public Type ContentType { get; }
+    public RenderFragmentFactory Content { get; }
     /// <summary>
     /// Footer component type
     /// </summary>
-    public Type? FooterType { get; init; }
-    /// <summary>
-    /// Contains content initialization parameters 
-    /// </summary>
-    public InitParametersDictionary? ContentParameters { get; init; }
-    /// <summary>
-    /// Contains footer initialization parameters 
-    /// </summary>
-    public InitParametersDictionary? FooterParameters { get; init; }
+    public RenderFragmentFactory? Footer { get; init; }
     /// <summary>
     /// Contains custom dialog button descriptions
     /// </summary>
@@ -56,8 +49,8 @@ public class DialogDescription
     /// <summary>
     /// Initializes a new instance of <see cref="DialogDescription"/>
     /// </summary>
-    public DialogDescription(Type contentType)
+    public DialogDescription(RenderFragmentFactory content)
     {
-        ContentType = contentType ?? throw new ArgumentNullException(nameof(contentType));
+        Content = content ?? throw new ArgumentNullException(nameof(content));
     }
 }
