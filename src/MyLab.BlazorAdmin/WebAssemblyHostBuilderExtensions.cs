@@ -9,6 +9,7 @@ using Microsoft.Extensions.Options;
 using MyLab.BlazorAdmin.Services;
 using MyLab.BlazorAdmin.Test;
 using System.Net.Http;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 using MyLab.BlazorAdmin.Services.Dialogs;
 
@@ -38,6 +39,7 @@ namespace MyLab.BlazorAdmin
             });
             
             hBuilder.Services
+                .AddBlazoredLocalStorageAsSingleton()
                 .Configure<TestOptions>(hBuilder.Configuration.GetSection(TestOptions.SectionName))
                 .AddScoped<IUserInfoProvider, DefaultUserInfoProvider>()
                 .AddScoped<DialogService>()
@@ -105,6 +107,7 @@ namespace MyLab.BlazorAdmin
         internal static void AddAdminServicesDemo(this WebAssemblyHostBuilder hBuilder)
         {
             hBuilder.Services
+                .AddBlazoredLocalStorageAsSingleton()
                 .Configure<TestOptions>(hBuilder.Configuration.GetSection(TestOptions.SectionName))
                 .AddScoped<IUserInfoProvider, DefaultUserInfoProvider>()
                 .AddSingleton<IPageNavigator, PageNavigator>()

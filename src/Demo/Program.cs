@@ -31,6 +31,7 @@ builder.Services.Configure<PageNavigationOptions>(opts =>
                 {
                     new() { Title = "Dialogs", FaClass = "comment-alt", UrlItem = "dialogs"},
                     new() { Title = "Alerts", FaClass = "exclamation-triangle", UrlItem = "alerts"},
+                    new() { Title = "Description", FaClass = "info-circle", UrlItem = "description"},
                 },
             }
         };

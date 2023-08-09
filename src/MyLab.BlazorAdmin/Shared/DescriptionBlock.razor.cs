@@ -6,7 +6,7 @@ namespace MyLab.BlazorAdmin.Shared
     /// <summary>
     /// A description control which can collapse and save its state into local storage
     /// </summary>
-    public partial class CollapsingDescription
+    public partial class DescriptionBlock
     {
         bool _expanded;
         string? _storageStateId;
