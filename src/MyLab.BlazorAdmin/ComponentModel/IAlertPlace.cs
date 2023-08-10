@@ -8,9 +8,9 @@ namespace MyLab.BlazorAdmin.ComponentModel;
 public interface IAlertPlace
 {
     /// <summary>
-    /// Adds new danger alert
+    /// Adds new status alert
     /// </summary>
-    IDisposable PutAlert(AlertDescription description);
+    IDisposable PutStatusAlert(AlertDescription description);
 }
 
 /// <summary>

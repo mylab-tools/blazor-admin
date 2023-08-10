@@ -47,10 +47,10 @@
                     <h2 class="ml-page-content-header mb-0">@_pageTitle</h2>
                 </div>
                 <div class="d-flex flex-column container ms-0 ps-4 pb-4 pe-4">
-                    @if (_topAlert != null)
+                    @if (_statusAlert != null)
                     {
                         <div>
-                            <AlertFromDescription Description="_topAlert" Closer=RemoveAlert/>
+                            <AlertFromDescription Description="_statusAlert" Closer=RemoveAlert/>
                         </div>
                     }
                     <CascadingValue Value="this" Name="LayoutPage">

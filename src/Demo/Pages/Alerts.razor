@@ -33,7 +33,7 @@
 
     private void OnClickDanger()
     {
-        PutAlert(new AlertDescription
+        PutStatusAlert(new AlertDescription
         {
             Title = "Alarm!",
             Content = "Some thing wrong!",
@@ -43,7 +43,7 @@
 
     private void OnClickWarning()
     {
-        PutAlert(new AlertDescription
+        PutStatusAlert(new AlertDescription
             {
                 Title = "Warning!",
                 Content = "Some thing suspicious!",
@@ -53,7 +53,7 @@
 
     private void OnClickSuccess()
     {
-        PutAlert(new AlertDescription
+        PutStatusAlert(new AlertDescription
             {
                 Title = "Success!",
                 Content = "We did it successfully!",
@@ -63,7 +63,7 @@
 
     private void OnClickNeutral()
     {
-        PutAlert(new AlertDescription
+        PutStatusAlert(new AlertDescription
         {
                 Content = "Nothing happened here",
         });
@@ -71,7 +71,7 @@
 
     private void OnClickTemplated()
     {
-        PutAlert(new AlertDescription
+        PutStatusAlert(new AlertDescription
         {
             Type = AlertType.Success,
             Title = "Well done!",

@@ -82,6 +82,8 @@ namespace MyLab.BlazorAdmin.Shared
             if (PageNavigator == null)
                 throw new InvalidOperationException("PageNavigator is not specified");
 
+            _statusAlert = null;
+
             var currentUri = new Uri(NavigationManager.Uri);
             var desc = PageNavigator.GetPageDescription(currentUri.LocalPath);
 

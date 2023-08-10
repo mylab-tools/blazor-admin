@@ -4,18 +4,18 @@ namespace MyLab.BlazorAdmin.Shared;
 
 public partial class AdminLayout : IAlertPlace
 {
-    AlertDescription? _topAlert;
+    AlertDescription? _statusAlert;
 
-    IDisposable IAlertPlace.PutAlert(AlertDescription description)
+    IDisposable IAlertPlace.PutStatusAlert(AlertDescription description)
     {
-        _topAlert = description;
+        _statusAlert = description;
         StateHasChanged();
         return new AlertRemover(this);
     }
 
     void RemoveAlert()
     {
-        _topAlert = null;
+        _statusAlert = null;
         StateHasChanged();
     }
 

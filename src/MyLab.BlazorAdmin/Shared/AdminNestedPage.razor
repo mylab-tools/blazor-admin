@@ -47,8 +47,8 @@
     /// Puts page alert
     /// </summary>
     /// <returns>An alert remover or null if unable to put</returns>
-    protected IDisposable? PutAlert(AlertDescription alertDescription)
+    protected IDisposable? PutStatusAlert(AlertDescription alertDescription)
     {
-        return (Layout as IAlertPlace)?.PutAlert(alertDescription);
+        return (Layout as IAlertPlace)?.PutStatusAlert(alertDescription);
     }
 }
