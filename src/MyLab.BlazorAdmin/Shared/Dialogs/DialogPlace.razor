@@ -18,22 +18,40 @@
     readonly List<DialogStuff> _dialogs = new();
 
     /// <inheritdoc />
-    public async Task<IDialog> CreateDialogAsync(DialogDescription description)
+    public async Task<IDialog<TDialog>> CreateDialogAsync<TDialog>(DialogDescription description)
     {
-        RenderFragment contentRf = CreateRenderFragment(description.ContentType, description.ContentParameters);
-
-        RenderFragment? footerRf = description.FooterType != null
-            ? CreateRenderFragment(description.FooterType, description.FooterParameters)
-            : null;
+        RenderFragment? footerRf = description.Footer?.CreateRenderFragment();
 
         var dialogId = "mylab-modal-" + Guid.NewGuid().ToString("N");
         var dialogWrapper = new BootstrapModalWrapper(Js, dialogId);
         dialogWrapper.Closed += DialogClosedAsync;
 
-        _dialogs.Add(new DialogStuff(dialogId, dialogWrapper, description, contentRf)
+        var dialog = new DialogWithModel<TDialog>(dialogWrapper);
+
+        var dialogStuff = new DialogStuff(dialogId, dialogWrapper, description)
         {
             Footer = footerRf
+        };
+        
+        RenderFragment contentRf = description.Content.CreateRenderFragment(o =>
+        {
+            if (o != null)
+            {
+                if (o is TDialog dlgModel)
+                {
+                    dialogStuff.ObjectModel = dlgModel;
+                    dialog.Model = dlgModel;
+                }
+                else
+                {
+                    throw new InvalidCastException($"Dialog type mismatch. Expected '{typeof(TDialog).FullName}' but actual '{o.GetType().FullName}'");
+                }
+            }
         });
+
+        dialogStuff.Content = contentRf;
+
+        _dialogs.Add(dialogStuff);
 
         _rendered.Reset();
 
@@ -42,7 +60,7 @@
         await _rendered.WaitAsync();
         await dialogWrapper.InitializeAsync(description.Backdrop);
 
-        return dialogWrapper;
+        return dialog;
     }
 
     /// <inheritdoc />
@@ -74,26 +92,6 @@
             _dialogs.Remove(foundDialog);
             StateHasChanged();
         }
-    }
-
-    RenderFragment CreateRenderFragment(Type componentType, IDictionary<string, object>? parameters)
-    {
-        return b =>
-        {
-            b.OpenComponent(0, componentType);
-
-            if (parameters != null)
-            {
-                foreach (var parameter in parameters)
-                {
-                    b.AddAttribute(1, parameter.Key, parameter.Value);
-                }
-            }
-
-            b.AddComponentReferenceCapture(2, component => {/*dialogRef = component*/});
-
-            b.CloseComponent();
-        };
     }
 }
 

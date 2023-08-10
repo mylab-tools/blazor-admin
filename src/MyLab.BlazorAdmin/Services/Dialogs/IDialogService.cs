@@ -8,10 +8,10 @@ namespace MyLab.BlazorAdmin.Services.Dialogs
     public interface IDialogService
     {
         /// <summary>
-        /// Creates <see cref="IDialogBuilder{TContent}"/>
+        /// Creates <see cref="IDialogBuilder{TDialog}"/>
         /// </summary>
-        /// <typeparam name="TContent">dialog content type</typeparam>
+        /// <typeparam name="TDialog">dialog content type</typeparam>
         /// <param name="title">title</param>
-        IDialogBuilder<TContent> Create<TContent>(string title);
+        IDialogBuilder<TDialog> Create<TDialog>(string title);
     }
 }

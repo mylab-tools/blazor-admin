@@ -14,7 +14,7 @@
         /// Gets callback action which invokes when button pressed
         /// </summary>
         /// <remarks>Returns consent for dialog closing</remarks>
-        public DialogCallback? Callback { get; init; }
+        public AsyncDialogCallback? Callback { get; set; }
         /// <summary>
         /// Gets or set primary button
         /// </summary>

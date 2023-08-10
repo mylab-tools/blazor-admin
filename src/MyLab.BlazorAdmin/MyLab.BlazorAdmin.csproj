@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -11,11 +11,11 @@
     <RepositoryUrl>https://github.com/mylab-tools/blazor-admin.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>blazor;admin</PackageTags>
-    <AssemblyVersion>0.2.1.0308</AssemblyVersion>
-    <FileVersion>0.2.1.0308</FileVersion>
+    <AssemblyVersion>0.3.1.0908</AssemblyVersion>
+    <FileVersion>0.3.1.0908</FileVersion>
     <Description>Contains the base things to make blazor admin application</Description>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>0.2.1</Version>
+    <Version>0.3.1</Version>
   </PropertyGroup>
 
 
@@ -33,7 +33,6 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="MyLab.ApiClient" Version="3.18.27" />
     <PackageReference Include="MyLab.ExpressionTools" Version="1.0.2" />
-    <PackageReference Include="MyLab.Log.Dsl" Version="3.6.5" />
     <PackageReference Include="Nito.AsyncEx" Version="5.1.2" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.32.0" />
   </ItemGroup>

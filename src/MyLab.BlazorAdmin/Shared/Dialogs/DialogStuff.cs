@@ -19,7 +19,7 @@ namespace MyLab.BlazorAdmin.Shared.Dialogs
         /// <summary>
         /// Content template
         /// </summary>
-        public RenderFragment Content { get; }
+        public RenderFragment? Content { get; set; }
         /// <summary>
         /// footer template
         /// </summary>
@@ -31,13 +31,20 @@ namespace MyLab.BlazorAdmin.Shared.Dialogs
         public IDialog Dialog { get; }
 
         /// <summary>
+        /// Gets a dialog model
+        /// </summary>
+        public object? ObjectModel { get; set; }
+
+        /// <summary>
         /// Initializes anew instance of <see cref="DialogStuff"/>
         /// </summary>
-        public DialogStuff(string id, IDialog dialog, DialogDescription description, RenderFragment content)
+        public DialogStuff(
+            string id, 
+            IDialog dialog, 
+            DialogDescription description)
         {
             Id = id;
             Description = description;
-            Content = content;
             Dialog = dialog;
         }
     }

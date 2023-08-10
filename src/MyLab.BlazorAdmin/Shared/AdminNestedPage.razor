@@ -11,7 +11,7 @@
     /// Gets or sets layout page
     /// </summary>
     [CascadingParameter(Name = "LayoutPage")]
-    protected IComponentRegistrar? Layout { get; set; }
+    protected object? Layout { get; set; }
 
     /// <inheritdoc />
     public IEnumerable<NavigationLink> GetNavigation()
@@ -28,7 +28,7 @@
     /// <inheritdoc />
     protected override void OnInitialized()
     {
-        _childRegistration = Layout?.RegisterChild(this);
+        _childRegistration = (Layout as IComponentRegistrar)?.RegisterChild(this);
 
         base.OnInitialized();
     }
@@ -41,5 +41,14 @@
         if (item == null) throw new ArgumentNullException(nameof(item));
 
         _navigation.Push(item);
+    }
+
+    /// <summary>
+    /// Puts page alert
+    /// </summary>
+    /// <returns>An alert remover or null if unable to put</returns>
+    protected IDisposable? PutStatusAlert(AlertDescription alertDescription)
+    {
+        return (Layout as IAlertPlace)?.PutStatusAlert(alertDescription);
     }
 }

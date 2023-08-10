@@ -1,0 +1,86 @@
+﻿@page "/alerts"
+@using MyLab.BlazorAdmin.ComponentModel
+@using MyLab.BlazorAdmin.Tools.Rendering
+@using Demo.Shared.Alerts
+@inherits AdminNestedPage
+
+<div class="mb-3 d-flex flex-column align-items-start">
+    <h5>Simple:</h5>
+    <div>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickDanger">
+            Put a Danger alert
+        </button>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickWarning">
+            Put a Warning alert
+        </button>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickSuccess">
+            Put a Success alert
+        </button>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickNeutral">
+            Put a Neutral alert
+        </button>
+    </div>
+    <h5>Templated:</h5>
+    <div>
+        <button type="button" class="btn btn-primary me-1" @onclick="OnClickTemplated">
+            Put templated
+        </button>
+    </div>
+</div>
+
+@code {
+
+
+    private void OnClickDanger()
+    {
+        PutStatusAlert(new AlertDescription
+        {
+            Title = "Alarm!",
+            Content = "Some thing wrong!",
+            Type = AlertType.Danger
+        });
+    }
+
+    private void OnClickWarning()
+    {
+        PutStatusAlert(new AlertDescription
+            {
+                Title = "Warning!",
+                Content = "Some thing suspicious!",
+                Type = AlertType.Warning
+            });
+    }
+
+    private void OnClickSuccess()
+    {
+        PutStatusAlert(new AlertDescription
+            {
+                Title = "Success!",
+                Content = "We did it successfully!",
+                Type = AlertType.Success
+            });
+    }
+
+    private void OnClickNeutral()
+    {
+        PutStatusAlert(new AlertDescription
+        {
+                Content = "Nothing happened here",
+        });
+    }
+
+    private void OnClickTemplated()
+    {
+        PutStatusAlert(new AlertDescription
+        {
+            Type = AlertType.Success,
+            Title = "Well done!",
+            Content = TemplateRenderFragmentFactory.Create(() => new TwoParagraphAlert
+            {
+                P1 = "Aww yeah, you successfully read this important alert message. This example text is going to run a bit longer so that you can see how spacing within an alert works with this kind of content.",
+                P2 = "Whenever you need to, be sure to use margin utilities to keep things nice and tidy."
+            })
+        });
+    }
+
+}

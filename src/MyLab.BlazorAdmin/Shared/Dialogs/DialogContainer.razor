@@ -46,7 +46,7 @@
 @code
 {
     /// <summary>
-    /// Dialog description
+    /// Dialog initialDescription
     /// </summary>
     [Parameter, EditorRequired]
     public DialogStuff? DialogStuff{ get; set; }
@@ -82,14 +82,15 @@
     private async Task CallbackButtonAsync(DialogButtonDescription button)
     {
         if(DialogStuff == null) return;
-        
+        if(DialogStuff.ObjectModel == null) return;
+
         DialogStuff.Dialog.Result = button.Result;
 
         var buttonConsent = button.Callback == null || 
-                            await button.Callback.Invoke(button.Result, button.State);
+                            await button.Callback.Invoke(DialogStuff.ObjectModel, button.Result, button.State);
 
         var dialogCallbackConsent = DialogStuff.Description.DialogCallback == null || 
-                                    await DialogStuff.Description.DialogCallback.Invoke(button.Result, button.State);
+                                    await DialogStuff.Description.DialogCallback.Invoke(DialogStuff.ObjectModel, button.Result, button.State);
         
         if (buttonConsent && dialogCallbackConsent)
         {

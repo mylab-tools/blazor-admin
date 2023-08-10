@@ -9,8 +9,8 @@ class DialogService : IDialogService, IDialogPlaceRegistrar
         _dialogPlace = dialogPlace ?? throw new ArgumentNullException(nameof(dialogPlace));
     }
 
-    public IDialogBuilder<TContent> Create<TContent>(string title)
+    public IDialogBuilder<TDialog> Create<TDialog>(string title)
     {
-        return new DialogBuilder<TContent>(title, _dialogPlace);
+        return new DialogBuilder<TDialog>(title, _dialogPlace);
     }
 }
